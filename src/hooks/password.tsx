@@ -5,21 +5,21 @@ import React, {
 	useState,
 } from 'react'
 import { callableCreator } from 'firebaseHelper'
-import { getPasswordListSchema } from 'schema'
+import { getPasswordsSchema } from 'schema'
 import { z } from 'zod'
 
-type DataType = z.infer<typeof getPasswordListSchema['res']>
+type DataType = z.infer<typeof getPasswordsSchema['res']>
 
 const context = createContext<{
 	passwords: DataType
-	getPassword: () => Promise<void>
+	getPassword: (masterPassword: string) => Promise<void>
 }>({ passwords: [], getPassword: async () => {} })
 
 export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 	const [passwords, setPasswords] = useState<DataType>([])
 
-	const getPassword = () => {
-		return callableCreator(getPasswordListSchema)(null).then(result => {
+	const getPassword = (masterPassword: string) => {
+		return callableCreator(getPasswordsSchema)(masterPassword).then(result => {
 			const data = result.data
 			setPasswords(data)
 		})

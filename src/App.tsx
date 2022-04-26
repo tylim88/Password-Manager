@@ -6,8 +6,8 @@ import {
 } from '@mantine/core'
 import { AppShell } from 'AppShell'
 import {
+	AuthProvider,
 	UserProvider,
-	AccountProvider,
 	PageProvider,
 	PasswordsProvider,
 } from 'hooks'
@@ -18,8 +18,8 @@ export const App = () => {
 		setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
 
 	return (
-		<UserProvider>
-			<AccountProvider>
+		<AuthProvider>
+			<UserProvider>
 				<PasswordsProvider>
 					<PageProvider>
 						<ColorSchemeProvider
@@ -32,7 +32,7 @@ export const App = () => {
 						</ColorSchemeProvider>
 					</PageProvider>
 				</PasswordsProvider>
-			</AccountProvider>
-		</UserProvider>
+			</UserProvider>
+		</AuthProvider>
 	)
 }

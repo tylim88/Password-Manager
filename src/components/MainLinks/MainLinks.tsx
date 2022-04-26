@@ -1,6 +1,6 @@
 import React from 'react'
 import { List, Login, Logout, LockSquare, LockAccess } from 'tabler-icons-react'
-import { useUser, useAccount, usePage, Page } from 'hooks'
+import { useAuth, useUser, usePage, Page } from 'hooks'
 import { ThemeIcon, UnstyledButton, Group, Text } from '@mantine/core'
 import { auth } from 'firebaseHelper'
 
@@ -88,11 +88,11 @@ const Public = [
 ] as const
 
 export const MainLinks = () => {
-	const { user } = useUser()
-	const { account } = useAccount()
+	const { user } = useAuth()
+	const { user: userAuth } = useUser()
 
 	const links = (
-		user ? (account?.hasMasterPassword ? Private : Setup) : Public
+		user ? (userAuth?.hasMasterPassword ? Private : Setup) : Public
 	).map(link => <MainLink {...link} key={link.label} />)
 	return <div>{links}</div>
 }

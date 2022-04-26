@@ -5,8 +5,8 @@ import React, {
 	useState,
 	useEffect,
 } from 'react'
+import { useAuth } from './auth'
 import { useUser } from './user'
-import { useAccount } from './account'
 
 export type Page =
 	| 'Sign Up/Login'
@@ -21,18 +21,18 @@ const context = createContext<{
 
 export const PageProvider = (props: PropsWithChildren<{}>) => {
 	const [page, setPage] = useState<Page>('Sign Up/Login')
-	const { user } = useUser()
-	const { account } = useAccount()
+	const { user } = useAuth()
+	const { user: userFromAuth } = useUser()
 
 	useEffect(() => {
-		if (user && account?.hasMasterPassword) {
+		if (user && userFromAuth?.hasMasterPassword) {
 			setPage('Password List')
-		} else if (user && !account?.hasMasterPassword) {
+		} else if (user && !userFromAuth?.hasMasterPassword) {
 			setPage('Setup Master Password')
 		} else if (!user) {
 			setPage('Sign Up/Login')
 		}
-	}, [user, account?.hasMasterPassword])
+	}, [user, userFromAuth?.hasMasterPassword])
 
 	return <context.Provider value={{ page, setPage }} {...props} />
 }

@@ -5,19 +5,35 @@ import React, {
 	useState,
 	useEffect,
 } from 'react'
-import { getAuth } from 'firebase/auth'
-import { onAuthStateChanged, User } from 'firebase/auth'
+import { useAuth } from './auth'
+import { MetaTypeCreator, getFirelord, onSnapshot } from 'firelordjs'
+import { db } from 'firebaseHelper'
 
-const context = createContext<{ user: User | null }>({ user: null })
+export type User = MetaTypeCreator<
+	{ hasMasterPassword: boolean },
+	'User',
+	string
+>
+
+const userRef = getFirelord<User>(db)('User')
+
+const context = createContext<{ user: User['read'] | undefined }>({
+	user: undefined,
+})
 
 export const UserProvider = (props: PropsWithChildren<{}>) => {
-	const [user, setUser] = useState<User | null>(null)
+	const [user, setUser] = useState<User['read'] | undefined>(undefined)
+	const { user: userFromAuth } = useAuth()
+	const userUid = userFromAuth?.uid
 
 	useEffect(() => {
-		return onAuthStateChanged(getAuth(), user => {
-			setUser(user)
-		})
-	}, [])
+		if (userUid) {
+			return onSnapshot(userRef.doc(userUid), snapshot => {
+				const data = snapshot.data()
+				setUser(data)
+			})
+		}
+	}, [userUid])
 
 	return <context.Provider value={{ user }} {...props} />
 }

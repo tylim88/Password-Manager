@@ -7,11 +7,11 @@ import {
 	Box,
 	useMantineTheme,
 } from '@mantine/core'
-import { useUser } from 'hooks'
+import { useAuth } from 'hooks'
 
 export function User() {
 	const theme = useMantineTheme()
-	const { user } = useUser()
+	const { user } = useAuth()
 
 	return (
 		user && (

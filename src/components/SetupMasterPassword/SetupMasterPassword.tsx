@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Center, Button, Group, PasswordInput, Text } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { setMasterPassword } from 'schema'
+import { setMasterPasswordSchema } from 'schema'
 import { callableCreator } from 'firebaseHelper'
 
 export const SetupMasterPassword = () => {
@@ -15,7 +15,7 @@ export const SetupMasterPassword = () => {
 		validate: {
 			masterPassword: value => {
 				try {
-					setMasterPassword.req.parse(value)
+					setMasterPasswordSchema.req.parse(value)
 					return null
 				} catch (e) {
 					return 'Invalid master password'
@@ -34,7 +34,7 @@ export const SetupMasterPassword = () => {
 				onSubmit={form.onSubmit(async values => {
 					setLoading(true)
 					setSubmitError(null)
-					await callableCreator(setMasterPassword)(values.masterPassword)
+					await callableCreator(setMasterPasswordSchema)(values.masterPassword)
 						.then(() => {
 							form.reset()
 						})

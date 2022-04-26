@@ -1,5 +1,5 @@
 import { getFunctions, httpsCallable } from 'firebase/functions'
-import { z, ZodType } from 'zod'
+import { z, ZodType, ZodTypeDef } from 'zod'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
@@ -22,10 +22,8 @@ const funRef = getFunctions(app)
 
 export const callableCreator = <
 	T extends {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		req: ZodType<any, any, any>
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		res: ZodType<any, any, any>
+		req: ZodType<unknown, ZodTypeDef, unknown>
+		res: ZodType<unknown, ZodTypeDef, unknown>
 		name: z.ZodLiteral<string>
 	}
 >(
