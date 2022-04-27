@@ -1,4 +1,4 @@
-import functions from 'firebase-functions'
+import * as functions from 'firebase-functions'
 import { z, ZodType, ZodTypeDef } from 'zod'
 import admin from 'firebase-admin'
 
@@ -23,7 +23,7 @@ const throwAndLogHttpsError = ({
 	functions.logger[logType || 'error']({
 		code,
 		message,
-		details: toLogDetails && details,
+		details: toLogDetails || ENV.dev ? details : undefined,
 		logType,
 	})
 	throw new functions.https.HttpsError(code, message)
@@ -72,7 +72,7 @@ export const onCallCreator = <
 		if (!reqParseResult.success) {
 			throwAndLogHttpsError({
 				code: 'invalid-argument',
-				message: 'The endpoint must be called with valid argument.',
+				message: 'invalid-argument',
 				details: reqParseResult.error,
 				toLogDetails,
 			})

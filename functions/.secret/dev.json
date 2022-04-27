@@ -1,0 +1,7 @@
+{
+	"env": {
+		"aes_secret": "some super secret 2",
+		"argon2_pepper": "some super secret",
+		"dev": "1"
+	}
+}

@@ -10,7 +10,11 @@ import {
 	UserProvider,
 	PageProvider,
 	PasswordsProvider,
+	MasterPasswordProvider,
+	NotificationProvider,
 } from 'hooks'
+
+import { Compose } from 'components'
 
 export const App = () => {
 	const [colorScheme, setColorScheme] = useState<ColorScheme>('light')
@@ -18,21 +22,24 @@ export const App = () => {
 		setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
 
 	return (
-		<AuthProvider>
-			<UserProvider>
-				<PasswordsProvider>
-					<PageProvider>
-						<ColorSchemeProvider
-							colorScheme={colorScheme}
-							toggleColorScheme={toggleColorScheme}
-						>
-							<MantineProvider theme={{ colorScheme }}>
-								<AppShell />
-							</MantineProvider>
-						</ColorSchemeProvider>
-					</PageProvider>
-				</PasswordsProvider>
-			</UserProvider>
-		</AuthProvider>
+		<Compose
+			components={[
+				NotificationProvider,
+				AuthProvider,
+				MasterPasswordProvider,
+				UserProvider,
+				PasswordsProvider,
+				PageProvider,
+			]}
+		>
+			<ColorSchemeProvider
+				colorScheme={colorScheme}
+				toggleColorScheme={toggleColorScheme}
+			>
+				<MantineProvider theme={{ colorScheme }}>
+					<AppShell />
+				</MantineProvider>
+			</ColorSchemeProvider>
+		</Compose>
 	)
 }

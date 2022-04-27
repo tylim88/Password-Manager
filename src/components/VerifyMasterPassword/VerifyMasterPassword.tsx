@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { Center, Button, Group, PasswordInput, Text } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { setMasterPasswordSchema } from 'schema'
+import { verifyMasterPasswordSchema } from 'schema'
 import { useMasterPassword, useNotification } from 'hooks'
 
-export const SetupMasterPassword = () => {
+export const VerifyMasterPassword = () => {
 	const [loading, setLoading] = useState(false)
 	const [submitError, setSubmitError] = useState<string | null>(null)
 	const { setNotification } = useNotification()
-	const { setupMasterPassword } = useMasterPassword()
+	const { verifyMasterPassword } = useMasterPassword()
 
 	const form = useForm({
 		initialValues: {
@@ -18,16 +18,11 @@ export const SetupMasterPassword = () => {
 		validate: {
 			masterPassword: value => {
 				try {
-					setMasterPasswordSchema.req.parse(value)
+					verifyMasterPasswordSchema.req.parse(value)
 					return null
 				} catch (e) {
 					return 'Invalid master password'
 				}
-			},
-			confirmMasterPassword: (value, values) => {
-				return value !== values.masterPassword
-					? 'Master Password does not match'
-					: null
 			},
 		},
 	})
@@ -43,7 +38,7 @@ export const SetupMasterPassword = () => {
 						text: 'Encrypting Master Password Please Wait...',
 						disallowClose: true,
 					})
-					await setupMasterPassword(masterPassword).catch(e => {
+					await verifyMasterPassword(masterPassword).catch(e => {
 						setLoading(false)
 						setSubmitError(`Error: ${e.message}`)
 					})
@@ -57,17 +52,11 @@ export const SetupMasterPassword = () => {
 						color: theme.colorScheme === 'dark' ? '#fff' : '#000',
 					})}
 				>
-					You Do Not Have MasterPassword Yet, Set Up One!
+					Welcome Back, Please Reenter Your Master Password!
 				</Text>
 				<PasswordInput
 					label='Master Password'
-					placeholder='at least 8 characters'
 					{...form.getInputProps('masterPassword')}
-				/>
-				<PasswordInput
-					mt='sm'
-					label='Confirm Master Password'
-					{...form.getInputProps('confirmMasterPassword')}
 				/>
 				<Group position='right' mt='md'>
 					<Button type='submit' loading={loading}>

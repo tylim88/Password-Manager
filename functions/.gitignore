@@ -8,6 +8,6 @@ typings/
 # Node.js dependency directory
 node_modules/
 
-env.json
+.secret/prod.json
 coverage/
 .runtimeconfig.json

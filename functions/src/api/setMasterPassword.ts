@@ -1,4 +1,10 @@
-import { onCallCreator, db, hashMasterPassword, userRefCreator } from 'helper'
+import {
+	onCallCreator,
+	db,
+	hashMasterPassword,
+	userRefCreator,
+	passwordsRefCreator,
+} from 'helper'
 import { setMasterPasswordSchema } from 'schema'
 
 export const setMasterPassword = onCallCreator(
@@ -7,6 +13,7 @@ export const setMasterPassword = onCallCreator(
 	async (masterPassword, context) => {
 		return await db.runTransaction(async transaction => {
 			const userRef = userRefCreator(context.auth.uid)
+			const passwordRef = passwordsRefCreator(context.auth.uid)
 
 			// if master password already exist, return error
 			const snapshot = await transaction.get(userRef)
@@ -24,10 +31,10 @@ export const setMasterPassword = onCallCreator(
 
 			const setData: Passwords = {
 				masterPasswordHash: await hashMasterPassword(masterPassword),
-				encryptedPasswords: '',
+				encryptedPasswords: null,
 			}
 
-			await transaction.set(userRef.collection('Hash').doc('Hash'), setData)
+			await transaction.set(passwordRef, setData)
 
 			return { code: 'ok', data: null } as const
 		})

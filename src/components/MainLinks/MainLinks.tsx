@@ -1,8 +1,16 @@
 import React from 'react'
-import { List, Login, Logout, LockSquare, LockAccess } from 'tabler-icons-react'
-import { useAuth, useUser, usePage, Page } from 'hooks'
+import {
+	List,
+	Login,
+	Logout,
+	LockSquare,
+	LockAccess,
+	Id,
+} from 'tabler-icons-react'
+import { useAuth, useUser, usePage, Page, useMasterPassword } from 'hooks'
 import { ThemeIcon, UnstyledButton, Group, Text } from '@mantine/core'
 import { auth } from 'firebaseHelper'
+import { LoadingPage } from '../LoadingPage'
 
 type MainLinkProps = {
 	icon: React.ReactNode
@@ -48,6 +56,36 @@ const MainLink = ({ icon, color, label }: MainLinkProps) => {
 	)
 }
 
+export const MainLinks = () => {
+	const { user } = useAuth()
+	const { user: userAuth } = useUser()
+	const { masterPassword } = useMasterPassword()
+
+	const links = (
+		user
+			? userAuth?.hasMasterPassword
+				? masterPassword
+					? Private
+					: Verify
+				: Setup
+			: Public
+	).map(link => <MainLink {...link} key={link.label} />)
+
+	return (
+		<LoadingPage
+			loaderProps={{ size: 'xl', variant: 'bars' }}
+			textProps={{ sx: { display: 'none' } }}
+		>
+			<div>{links}</div>
+		</LoadingPage>
+	)
+}
+const logout = {
+	icon: <Logout size={24} />,
+	color: 'violet',
+	label: 'Logout',
+} as const
+
 const Private = [
 	{
 		icon: <List size={24} />,
@@ -59,11 +97,7 @@ const Private = [
 		color: 'blue',
 		label: 'Change Master Password',
 	},
-	{
-		icon: <Logout size={24} />,
-		color: 'violet',
-		label: 'Logout',
-	},
+	logout,
 ] as const
 
 const Setup = [
@@ -72,11 +106,16 @@ const Setup = [
 		color: 'blue',
 		label: 'Setup Master Password',
 	},
+	logout,
+] as const
+
+const Verify = [
 	{
-		icon: <Logout size={24} />,
-		color: 'violet',
-		label: 'Logout',
+		icon: <Id size={24} />,
+		color: 'blue',
+		label: 'Verify Master Password',
 	},
+	logout,
 ] as const
 
 const Public = [
@@ -86,13 +125,3 @@ const Public = [
 		label: 'Sign Up/Login',
 	},
 ] as const
-
-export const MainLinks = () => {
-	const { user } = useAuth()
-	const { user: userAuth } = useUser()
-
-	const links = (
-		user ? (userAuth?.hasMasterPassword ? Private : Setup) : Public
-	).map(link => <MainLink {...link} key={link.label} />)
-	return <div>{links}</div>
-}

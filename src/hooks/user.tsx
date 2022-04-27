@@ -11,31 +11,42 @@ import { db } from 'firebaseHelper'
 
 export type User = MetaTypeCreator<
 	{ hasMasterPassword: boolean },
-	'User',
+	'Users',
 	string
 >
 
-const userRef = getFirelord<User>(db)('User')
+const userRef = getFirelord<User>(db)('Users')
 
-const context = createContext<{ user: User['read'] | undefined }>({
+const context = createContext<{
+	user: User['read'] | undefined
+	loading: boolean
+}>({
 	user: undefined,
+	loading: true,
 })
 
 export const UserProvider = (props: PropsWithChildren<{}>) => {
 	const [user, setUser] = useState<User['read'] | undefined>(undefined)
-	const { user: userFromAuth } = useAuth()
+	const { user: userFromAuth, resetCallbackObj } = useAuth()
+	const [loading, setLoading] = useState(true)
+
+	resetCallbackObj['user'] = () => setUser(undefined)
 	const userUid = userFromAuth?.uid
 
 	useEffect(() => {
 		if (userUid) {
+			setLoading(true)
 			return onSnapshot(userRef.doc(userUid), snapshot => {
 				const data = snapshot.data()
 				setUser(data)
+				setLoading(false)
 			})
+		} else {
+			setLoading(false)
 		}
 	}, [userUid])
 
-	return <context.Provider value={{ user }} {...props} />
+	return <context.Provider value={{ user, loading }} {...props} />
 }
 
 export const useUser = () => useContext(context)

@@ -14,10 +14,13 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"declaration": false,
-		"noEmit": false,
+		"noEmit": true,
 		"baseUrl": "src",
 		"outDir": "lib",
-		"target": "es2017"
+		"target": "es2017",
+		"paths": {
+			"*": ["*"]
+		}
 	},
 	"compileOnSave": true,
 	"include": ["src"]

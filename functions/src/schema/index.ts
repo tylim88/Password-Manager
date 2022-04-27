@@ -43,5 +43,11 @@ export const updatePasswordsSchema = {
 		})
 		.strict(),
 	res: z.literal(null),
-	name: z.literal('updatePasswordList'),
+	name: z.literal('updatePasswords'),
+}
+
+export const verifyMasterPasswordSchema = {
+	req: masterPassword,
+	res: z.boolean(),
+	name: z.literal('verifyMasterPassword'),
 }
