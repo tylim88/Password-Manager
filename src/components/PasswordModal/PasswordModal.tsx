@@ -13,16 +13,11 @@ import { updatePasswordsSchema } from 'schema'
 
 export const PasswordModal = () => {
 	const {
-		modal: { username, site, password, validate, onRequest, ...rest },
+		modal: { initialValues, validate, onRequest, ...rest },
 	} = usePasswordModal()
 
 	const form = useForm({
-		initialValues: {
-			site,
-			username,
-			password,
-		},
-
+		initialValues,
 		validate: {
 			site: (value, values) => {
 				try {

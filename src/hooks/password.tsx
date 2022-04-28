@@ -2,7 +2,7 @@ import React, {
 	useContext,
 	createContext,
 	PropsWithChildren,
-	useState,
+	useCallback,
 	useEffect,
 } from 'react'
 import { callableCreator, HttpsCallableResult } from 'firebaseHelper'
@@ -11,6 +11,7 @@ import { useAuth } from './auth'
 import { useNotification } from './notification'
 import { useMasterPassword } from './masterPassword'
 import { sortBy } from 'lodash'
+import { useListState } from '@mantine/hooks'
 
 const context = createContext<{
 	passwords: Secret[]
@@ -21,23 +22,44 @@ const context = createContext<{
 			site: string
 		}[]
 	) => Promise<HttpsCallableResult<null>>
+	reorder: (from: number, to: number) => void
+	sort: () => void
+
 	// @ts-expect-error
 }>({ passwords: [] })
 
 export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
-	const [passwords, setPasswords] = useState<Secret[]>([])
+	const [passwords, handlers] = useListState<Secret>([])
 	const { masterPassword } = useMasterPassword()
 	const { setNotificationFailed, setNotificationSuccess } = useNotification()
 
 	const { resetCallbackObj } = useAuth()
 
+	const setPasswords = useCallback(
+		(passwords: Secret[]) => {
+			return handlers.setState(passwords)
+		},
+		[handlers]
+	)
+
+	const reorder = (from: number, to: number) => handlers.reorder({ from, to })
+
+	const sort = () => setPasswords(sortBy(passwords, ['site', 'username']))
+
 	useEffect(() => {
 		masterPassword &&
-			callableCreator(getPasswordsSchema)(masterPassword).then(result => {
-				const data = result.data
-				setPasswords(data)
-			})
-	}, [masterPassword])
+			callableCreator(getPasswordsSchema)(masterPassword)
+				.then(result => {
+					const data = result.data
+					setPasswords(data)
+				})
+				.catch(err => {
+					setNotificationFailed({
+						text: 'Failed to load passwords!',
+						timeout: 0,
+					})
+				})
+	}, [setPasswords, masterPassword, setNotificationFailed])
 
 	resetCallbackObj['passwords'] = () => setPasswords([])
 
@@ -46,27 +68,31 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 			// this should never happen
 			throw Error('no master password or master password not verified yet')
 		}
-		const sortedPassword = sortBy(newPasswords, ['site', 'username'])
 
 		return callableCreator(updatePasswordsSchema)({
 			masterPassword,
-			newPasswords: sortedPassword,
+			newPasswords,
 		})
 			.then(result => {
-				setPasswords(sortedPassword)
+				setPasswords(newPasswords)
 				setNotificationSuccess({ text: 'Successfully updated passwords!' })
 				return result
 			})
 			.catch(err => {
 				setNotificationFailed({
-					text: 'Something Went Wrong!',
+					text: 'Failed to update passwords!',
 					timeout: 0,
 				})
 				throw err
 			})
 	}
 
-	return <context.Provider value={{ passwords, updatePasswords }} {...props} />
+	return (
+		<context.Provider
+			value={{ passwords, updatePasswords, sort, reorder }}
+			{...props}
+		/>
+	)
 }
 
 export const usePasswords = () => useContext(context)

@@ -1,4 +1,4 @@
-import React, {
+import {
 	useContext,
 	createContext,
 	PropsWithChildren,
@@ -30,7 +30,6 @@ export const AuthProvider = (props: PropsWithChildren<{}>) => {
 		onIdle: () => {
 			user &&
 				setNotification({
-					isOpen: true,
 					text: 'You have been signed out due to inactivity.',
 					timeout: 0,
 				})

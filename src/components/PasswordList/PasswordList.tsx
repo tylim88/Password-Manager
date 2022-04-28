@@ -9,13 +9,13 @@ import {
 } from '@mantine/core'
 import { useForm, formList } from '@mantine/form'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { GripVertical } from 'tabler-icons-react'
-import { Trash } from 'tabler-icons-react'
-import { usePasswords } from 'hooks'
+import { Trash, Edit, GripVertical } from 'tabler-icons-react'
+import { usePasswords, usePasswordModal } from 'hooks'
 import { Text } from '../Text'
 
 export const PasswordList = () => {
-	const { passwords } = usePasswords()
+	const { passwords, reorder } = usePasswords()
+	const { addPassword } = usePasswordModal()
 
 	const form = useForm({
 		initialValues: {
@@ -41,6 +41,13 @@ export const PasswordList = () => {
 						{...form.getListInputProps('passwords', index, 'password')}
 					/>
 					<ActionIcon
+						color='blue'
+						variant='hover'
+						onClick={() => form.removeListItem('passwords', index)}
+					>
+						<Edit size={16} />
+					</ActionIcon>
+					<ActionIcon
 						color='red'
 						variant='hover'
 						onClick={() => form.removeListItem('passwords', index)}
@@ -65,7 +72,7 @@ export const PasswordList = () => {
 				</Group>
 			) : (
 				<Text color='dimmed' align='center'>
-					No one here...
+					Password Lists
 				</Text>
 			)}
 

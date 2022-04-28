@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Center, Button, Group, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { verifyMasterPasswordSchema } from 'schema'
+import { verifyMasterPasswordSchema, zodErrorHandling } from 'schema'
 import { useMasterPassword, useNotification } from 'hooks'
 import { Lock } from 'tabler-icons-react'
 import { Text } from '../Text'
@@ -15,7 +15,6 @@ export const VerifyMasterPassword = () => {
 	const form = useForm({
 		initialValues: {
 			masterPassword: '',
-			confirmMasterPassword: '',
 		},
 		validate: {
 			masterPassword: value => {
@@ -23,7 +22,7 @@ export const VerifyMasterPassword = () => {
 					verifyMasterPasswordSchema.req.parse(value)
 					return null
 				} catch (e) {
-					return 'Invalid master password'
+					return zodErrorHandling(e)
 				}
 			},
 		},

@@ -8,20 +8,19 @@ import { ModalProps } from '@mantine/core'
 import { useAuth } from './auth'
 import { usePasswords } from './password'
 import { HttpsCallableResult } from 'firebaseHelper'
-import { cloneDeep } from 'lodash'
-import { isUnique } from 'schema'
+import { cloneDeep, find } from 'lodash'
 
-type Modal = ModalProps &
-	Secret & {
-		onRequest: (value: Secret) => Promise<HttpsCallableResult<null>>
-		validate: (values: { site: string; username: string }) => null | string
-	}
+type Modal = ModalProps & { initialValues: Secret } & {
+	onRequest: (value: Secret) => Promise<HttpsCallableResult<null>>
+	validate: (values: { site: string; username: string }) => null | string
+}
 
 const context = createContext<{
 	modal: Modal
 	setModal: React.Dispatch<React.SetStateAction<Modal>>
-	editPasswordModal: (info: Secret, index: number) => void
-	addPasswordModal: (info: Secret, index: number) => void
+	editPassword: (initialValues: Secret, index: number) => void
+	addPassword: (initialValues: Secret, index: number) => void
+	deletePassword: (initialValues: Secret, index: number) => void
 	// @ts-expect-error
 }>({})
 
@@ -30,9 +29,7 @@ export const PasswordModalProvider = (props: PropsWithChildren<{}>) => {
 		onRequest: async () => ({ data: null }),
 		onClose: () => {},
 		opened: false,
-		username: '',
-		site: '',
-		password: '',
+		initialValues: { username: '', site: '', password: '' },
 		validate: () => null,
 	})
 	const { resetCallbackObj } = useAuth()
@@ -43,45 +40,79 @@ export const PasswordModalProvider = (props: PropsWithChildren<{}>) => {
 			onRequest: async () => ({ data: null }),
 			onClose: () => {},
 			opened: false,
-			username: '',
-			site: '',
-			password: '',
+			initialValues: { username: '', site: '', password: '' },
 			validate: () => null,
 		})
 
 	resetCallbackObj['modal'] = reset
 
-	const editPasswordModal = (props: Secret, index: number) => {
+	const editPassword = (initialValues: Secret, index: number) => {
 		setModal({
 			onClose: reset,
-			onRequest: (value: Secret) => {
-				const clone = cloneDeep(passwords)
-				clone[index] = value
-				return updatePasswords(clone)
+			onRequest: async (value: Secret) => {
+				const newPasswords = cloneDeep(passwords)
+				newPasswords[index] = value
+				return updatePasswords(newPasswords)
 			},
 			opened: true,
 			title: 'Edit Password',
-			validate: isUnique(props),
-			...props,
+			validate: isUnique(initialValues),
+			initialValues,
 		})
 	}
 
-	const addPasswordModal = (props: Secret) => {
+	const deletePassword = (initialValues: Secret, index: number) => {
 		setModal({
 			onClose: reset,
-			onRequest: (value: Secret) => {
-				return updatePasswords([value, ...passwords])
+			onRequest: async (value: Secret) => {
+				const newPasswords = cloneDeep(passwords)
+				newPasswords[index] = value
+				return updatePasswords(newPasswords)
 			},
 			opened: true,
-			validate: isUnique(props),
+			title: 'Delete Password',
+			validate: isUnique(initialValues),
+			initialValues,
+		})
+	}
+
+	const isUnique =
+		(oldValues: { site: string; username: string }) =>
+		(newValues: { site: string; username: string }) => {
+			const exist = find(passwords, newValues)
+			if (
+				oldValues.site !== newValues.site &&
+				oldValues.username !== newValues.username &&
+				exist
+			) {
+				return 'Site and username already exist'
+			}
+			return null
+		}
+
+	const addPassword = (initialValues: Secret) => {
+		setModal({
+			onClose: reset,
+			onRequest: async (value: Secret) => {
+				const newPasswords = [value, ...passwords]
+				return updatePasswords(newPasswords)
+			},
+			opened: true,
+			validate: isUnique(initialValues),
 			title: 'Add New Password',
-			...props,
+			initialValues,
 		})
 	}
 
 	return (
 		<context.Provider
-			value={{ modal, setModal, editPasswordModal, addPasswordModal }}
+			value={{
+				modal,
+				setModal,
+				editPassword,
+				addPassword,
+				deletePassword,
+			}}
 			{...props}
 		/>
 	)

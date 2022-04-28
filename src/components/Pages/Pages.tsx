@@ -5,13 +5,14 @@ import { SetupMasterPassword } from '../SetupMasterPassword'
 import { ChangeMasterPassword } from '../ChangeMasterPassword'
 import { LoadingPage } from '../LoadingPage'
 import { VerifyMasterPassword } from '../VerifyMasterPassword'
+import { PasswordList } from '../PasswordList'
 
 import { Notification, Box, Progress } from '@mantine/core'
 
 export const Pages = () => {
 	const { page } = usePage()
 	const {
-		notification: { isOpen, text, ...rest },
+		notification: { isOpen, text, disallowClose, ...rest },
 		progress,
 	} = useNotification()
 
@@ -27,8 +28,12 @@ export const Pages = () => {
 					}}
 				>
 					<Box sx={{ width: '400px', position: 'absolute' }}>
-						{progress ? <Progress value={progress} /> : null}
-						<Notification title='Notification' {...rest}>
+						{progress && !disallowClose ? <Progress value={progress} /> : null}
+						<Notification
+							title='Notification'
+							disallowClose={disallowClose}
+							{...rest}
+						>
 							{text || 'default text'}
 						</Notification>
 					</Box>
@@ -51,6 +56,8 @@ export const Pages = () => {
 					<ChangeMasterPassword />
 				) : page === 'Verify Master Password' ? (
 					<VerifyMasterPassword />
+				) : page === 'Password List' ? (
+					<PasswordList />
 				) : null}
 			</LoadingPage>
 		</>

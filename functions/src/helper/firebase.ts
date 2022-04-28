@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions'
 import { z, ZodType, ZodTypeDef } from 'zod'
 import admin from 'firebase-admin'
-
+import { zodErrorHandling } from 'schema'
 admin.initializeApp()
 export const db = admin.firestore()
 
@@ -68,12 +68,13 @@ export const onCallCreator = <
 				toLogDetails,
 			})
 		}
-		const reqParseResult = schema.req.safeParse(data)
-		if (!reqParseResult.success) {
+		try {
+			schema.req.parse(data)
+		} catch (e) {
 			throwAndLogHttpsError({
 				code: 'invalid-argument',
-				message: 'invalid-argument',
-				details: reqParseResult.error,
+				message: zodErrorHandling(e),
+				details: e,
 				toLogDetails,
 			})
 		}
@@ -84,12 +85,14 @@ export const onCallCreator = <
 				context as NonNullableKey<functions.https.CallableContext, 'auth'>
 			)
 			if (res.code === 'ok') {
-				const resParseResult = schema.res.safeParse(res.data)
-				if (!resParseResult.success) {
+				// rare error
+				try {
+					schema.res.parse(res.data)
+				} catch (e) {
 					throwAndLogHttpsError({
 						code: 'internal',
-						message: 'internal error',
-						details: resParseResult.error,
+						message: 'output data malformed',
+						details: e,
 						toLogDetails,
 					})
 				}

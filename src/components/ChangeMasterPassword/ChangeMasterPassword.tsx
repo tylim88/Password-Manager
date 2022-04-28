@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Center, Button, Group, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { updateMasterPasswordSchema } from 'schema'
+import { updateMasterPasswordSchema, zodErrorHandling } from 'schema'
 import { useMasterPassword, useNotification } from 'hooks'
 import { Text } from '../Text'
 import { Lock } from 'tabler-icons-react'
@@ -25,7 +25,7 @@ export const ChangeMasterPassword = () => {
 						? null
 						: 'Incorrect old master password'
 				} catch (e) {
-					return 'Invalid master password'
+					return zodErrorHandling(e)
 				}
 			},
 			newMasterPassword: (value, values) => {
@@ -35,7 +35,7 @@ export const ChangeMasterPassword = () => {
 						? 'The New Master Password Is Similar To The Old One'
 						: null
 				} catch (e) {
-					return 'Invalid master password'
+					return zodErrorHandling(e)
 				}
 			},
 		},

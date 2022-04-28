@@ -8,6 +8,7 @@
 		"@mantine/hooks": "^4.1.5",
 		"firebase": "^9.6.11",
 		"firelordjs": "^1.1.16",
+		"localforage": "^1.10.0",
 		"lodash": "^4.17.21",
 		"react": "^17.0.2",
 		"react-beautiful-dnd": "^13.1.0",
