@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { Center, Button, Group, PasswordInput, Text } from '@mantine/core'
+import { Center, Button, Group, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { verifyMasterPasswordSchema } from 'schema'
 import { useMasterPassword, useNotification } from 'hooks'
+import { Lock } from 'tabler-icons-react'
+import { Text } from '../Text'
 
 export const VerifyMasterPassword = () => {
 	const [loading, setLoading] = useState(false)
 	const [submitError, setSubmitError] = useState<string | null>(null)
-	const { setNotification } = useNotification()
+	const { setNotificationLoading } = useNotification()
 	const { verifyMasterPassword } = useMasterPassword()
 
 	const form = useForm({
@@ -32,11 +34,8 @@ export const VerifyMasterPassword = () => {
 				onSubmit={form.onSubmit(async ({ masterPassword }) => {
 					setLoading(true)
 					setSubmitError(null)
-					setNotification({
-						isOpen: true,
-						loading: true,
-						text: 'Encrypting Master Password Please Wait...',
-						disallowClose: true,
+					setNotificationLoading({
+						text: 'Verifying Master Password Please Wait...',
 					})
 					await verifyMasterPassword(masterPassword).catch(e => {
 						setLoading(false)
@@ -56,6 +55,7 @@ export const VerifyMasterPassword = () => {
 				</Text>
 				<PasswordInput
 					label='Master Password'
+					icon={<Lock size={16} />}
 					{...form.getInputProps('masterPassword')}
 				/>
 				<Group position='right' mt='md'>

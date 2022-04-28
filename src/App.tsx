@@ -12,9 +12,10 @@ import {
 	PasswordsProvider,
 	MasterPasswordProvider,
 	NotificationProvider,
+	PasswordModalProvider,
 } from 'hooks'
 
-import { Compose } from 'components'
+import { Compose, PasswordModal } from 'components'
 
 export const App = () => {
 	const [colorScheme, setColorScheme] = useState<ColorScheme>('light')
@@ -29,6 +30,7 @@ export const App = () => {
 				MasterPasswordProvider,
 				UserProvider,
 				PasswordsProvider,
+				PasswordModalProvider,
 				PageProvider,
 			]}
 		>
@@ -37,7 +39,10 @@ export const App = () => {
 				toggleColorScheme={toggleColorScheme}
 			>
 				<MantineProvider theme={{ colorScheme }}>
-					<AppShell />
+					<>
+						<PasswordModal />
+						<AppShell />
+					</>
 				</MantineProvider>
 			</ColorSchemeProvider>
 		</Compose>

@@ -7,15 +7,13 @@ import React, {
 } from 'react'
 import { callableCreator, HttpsCallableResult } from 'firebaseHelper'
 import { getPasswordsSchema, updatePasswordsSchema } from 'schema'
-import { z } from 'zod'
 import { useAuth } from './auth'
 import { useNotification } from './notification'
 import { useMasterPassword } from './masterPassword'
-
-type Passwords = z.infer<typeof getPasswordsSchema['res']>
+import { sortBy } from 'lodash'
 
 const context = createContext<{
-	passwords: Passwords
+	passwords: Secret[]
 	updatePasswords: (
 		passwords: {
 			password: string
@@ -27,7 +25,7 @@ const context = createContext<{
 }>({ passwords: [] })
 
 export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
-	const [passwords, setPasswords] = useState<Passwords>([])
+	const [passwords, setPasswords] = useState<Secret[]>([])
 	const { masterPassword } = useMasterPassword()
 	const { setNotificationFailed, setNotificationSuccess } = useNotification()
 
@@ -43,16 +41,19 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 
 	resetCallbackObj['passwords'] = () => setPasswords([])
 
-	const updatePasswords = (passwords: Passwords) => {
+	const updatePasswords = (newPasswords: Secret[]) => {
 		if (!masterPassword) {
 			// this should never happen
 			throw Error('no master password or master password not verified yet')
 		}
+		const sortedPassword = sortBy(newPasswords, ['site', 'username'])
+
 		return callableCreator(updatePasswordsSchema)({
 			masterPassword,
-			newPasswords: passwords,
+			newPasswords: sortedPassword,
 		})
 			.then(result => {
+				setPasswords(sortedPassword)
 				setNotificationSuccess({ text: 'Successfully updated passwords!' })
 				return result
 			})

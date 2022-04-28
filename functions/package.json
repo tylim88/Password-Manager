@@ -2,6 +2,7 @@
 	"name": "functions",
 	"scripts": {
 		"reinstall": "rm -rf node_modules && rm -rf package-lock.json && npm i",
+		"pretty-quick": "pretty-quick --stage",
 		"lint": "eslint --ext .ts . --fix",
 		"test": "rm -rf coverage && firebase emulators:exec \"jest --forceExit\"",
 		"tsc": "tsc",
@@ -30,6 +31,7 @@
 		"crypto-js": "^4.1.1",
 		"firebase-admin": "^10.0.2",
 		"firebase-functions": "^3.18.0",
+		"lodash": "^4.17.21",
 		"regenerator-runtime": "^0.13.9",
 		"zod": "^3.14.4"
 	},

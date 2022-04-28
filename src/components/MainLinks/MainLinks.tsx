@@ -8,9 +8,10 @@ import {
 	Id,
 } from 'tabler-icons-react'
 import { useAuth, useUser, usePage, Page, useMasterPassword } from 'hooks'
-import { ThemeIcon, UnstyledButton, Group, Text } from '@mantine/core'
+import { ThemeIcon, UnstyledButton, Group } from '@mantine/core'
 import { auth } from 'firebaseHelper'
 import { LoadingPage } from '../LoadingPage'
+import { Text } from '../Text'
 
 type MainLinkProps = {
 	icon: React.ReactNode

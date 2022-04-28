@@ -1,8 +1,6 @@
 import {
 	Group,
-	TextInput,
 	Box,
-	Text,
 	Code,
 	Button,
 	Center,
@@ -14,6 +12,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { GripVertical } from 'tabler-icons-react'
 import { Trash } from 'tabler-icons-react'
 import { usePasswords } from 'hooks'
+import { Text } from '../Text'
 
 export const PasswordList = () => {
 	const { passwords } = usePasswords()
@@ -31,15 +30,13 @@ export const PasswordList = () => {
 					<Center {...provided.dragHandleProps}>
 						<GripVertical size={18} />
 					</Center>
-					<TextInput
-						placeholder='https://example.com'
-						{...form.getListInputProps('passwords', index, 'site')}
-					/>
-					<TextInput
+					<Text {...form.getListInputProps('passwords', index, 'site')} />
+					<Text
 						placeholder='example@mail.com'
 						{...form.getListInputProps('passwords', index, 'username')}
 					/>
 					<PasswordInput
+						disabled
 						placeholder='********'
 						{...form.getListInputProps('passwords', index, 'password')}
 					/>

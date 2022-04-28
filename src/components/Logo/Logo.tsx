@@ -1,6 +1,6 @@
 import React from 'react'
-import { Group, Title } from '@mantine/core'
-
+import { Group } from '@mantine/core'
+import { Title } from '../Title'
 export const Logo = () => {
 	return (
 		<Group>

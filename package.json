@@ -8,6 +8,7 @@
 		"@mantine/hooks": "^4.1.5",
 		"firebase": "^9.6.11",
 		"firelordjs": "^1.1.16",
+		"lodash": "^4.17.21",
 		"react": "^17.0.2",
 		"react-beautiful-dnd": "^13.1.0",
 		"react-dom": "^17.0.2",
@@ -19,7 +20,7 @@
 	},
 	"scripts": {
 		"reinstall": "rm -rf package-lock.json && npm i && npx husky install",
-		"lint": "eslint . --ext .js,.ts,.tsx --fix && npm --prefix functions run lint",
+		"lint": "eslint . --ext .js,.ts,.tsx --fix",
 		"pretty-quick": "pretty-quick --stage",
 		"use": "cross-env-shell \"firebase use $REACT_APP_projectId\"",
 		"tsc": "tsc",
@@ -30,9 +31,16 @@
 		"dev": "===================================dev=======================================",
 		"d-start": "env-cmd -f .config/dev.env \"npm start\"",
 		"d-build": "env-cmd -f .config/dev.env \"npm run build\"",
-		"prod": "===================================prod=======================================",
+		"prod": "===================================prod======================================",
 		"p-start": "env-cmd -f .config/prod.env \"npm start\"",
-		"p-build": "env-cmd -f .config/prod.env \"npm run use npm run build\""
+		"p-build": "env-cmd -f .config/prod.env \"npm run use npm run build\"",
+		"function": "++++++++++++++++++++++++++++function+++++++++++++++++++++++++++++++++++++",
+		"f-lint": "npm --prefix functions run lint",
+		"f-build": "npm --prefix functions run build",
+		"f-pretty-quick": "npm --prefix functions run pretty-quick",
+		"f-d-test": "npm --prefix functions run d-test",
+		"f-d-deploy": "npm --prefix functions run d-deploy",
+		"f-p-deploy": "npm --prefix functions run p-deploy"
 	},
 	"eslintConfig": {
 		"extends": [
@@ -60,6 +68,7 @@
 		"@testing-library/react": "^13.1.1",
 		"@testing-library/user-event": "^14.1.1",
 		"@types/jest": "^27.4.1",
+		"@types/lodash": "^4.14.182",
 		"@types/node": "^17.0.26",
 		"@types/react": "^17.0.2",
 		"@types/react-beautiful-dnd": "^13.1.2",

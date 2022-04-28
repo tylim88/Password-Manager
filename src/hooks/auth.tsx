@@ -44,7 +44,7 @@ export const AuthProvider = (props: PropsWithChildren<{}>) => {
 			setLoading(false)
 			if (!user) {
 				for (const prop in reset.current) {
-					reset.current[prop]() // reset all state
+					reset.current[prop]() // reset all states
 				}
 			}
 		})

@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { Center, Button, Group, PasswordInput, Text } from '@mantine/core'
+import { Center, Button, Group, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { updateMasterPasswordSchema } from 'schema'
 import { useMasterPassword, useNotification } from 'hooks'
+import { Text } from '../Text'
+import { Lock } from 'tabler-icons-react'
 
 export const ChangeMasterPassword = () => {
 	const [loading, setLoading] = useState(false)
 	const [submitError, setSubmitError] = useState<string | null>(null)
-	const { setNotification } = useNotification()
+	const { setNotificationLoading } = useNotification()
 	const { masterPassword, changeMasterPassword } = useMasterPassword()
 
 	const form = useForm({
@@ -45,11 +47,8 @@ export const ChangeMasterPassword = () => {
 					async ({ oldMasterPassword, newMasterPassword }) => {
 						setLoading(true)
 						setSubmitError(null)
-						setNotification({
-							isOpen: true,
-							loading: true,
+						setNotificationLoading({
 							text: 'Updating Master Password Please Wait...',
-							disallowClose: true,
 						})
 						await changeMasterPassword({
 							oldMasterPassword,
@@ -77,11 +76,13 @@ export const ChangeMasterPassword = () => {
 				</Text>
 				<PasswordInput
 					label='Old Master Password'
+					icon={<Lock size={16} />}
 					{...form.getInputProps('oldMasterPassword')}
 				/>
 				<PasswordInput
 					mt='sm'
 					label='New Master Password'
+					icon={<Lock size={16} />}
 					placeholder='at least 8 characters'
 					{...form.getInputProps('newMasterPassword')}
 				/>

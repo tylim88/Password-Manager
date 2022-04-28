@@ -3,13 +3,13 @@ import {
 	UnstyledButton,
 	Group,
 	Avatar,
-	Text,
 	Box,
 	useMantineTheme,
 } from '@mantine/core'
 import { useAuth } from 'hooks'
+import { Text } from '../Text'
 
-export function User() {
+export const User = () => {
 	const theme = useMantineTheme()
 	const { user } = useAuth()
 

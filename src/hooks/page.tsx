@@ -26,7 +26,6 @@ export const PageProvider = (props: PropsWithChildren<{}>) => {
 	const { masterPassword } = useMasterPassword()
 	const { user } = useAuth()
 	const { user: userFromAuth } = useUser()
-
 	useEffect(() => {
 		if (
 			user &&

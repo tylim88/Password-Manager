@@ -6,13 +6,13 @@ import { ChangeMasterPassword } from '../ChangeMasterPassword'
 import { LoadingPage } from '../LoadingPage'
 import { VerifyMasterPassword } from '../VerifyMasterPassword'
 
-import { Notification, Box } from '@mantine/core'
+import { Notification, Box, Progress } from '@mantine/core'
 
 export const Pages = () => {
 	const { page } = usePage()
 	const {
 		notification: { isOpen, text, ...rest },
-		setNotification,
+		progress,
 	} = useNotification()
 
 	return (
@@ -26,18 +26,12 @@ export const Pages = () => {
 						justifyContent: 'flex-end',
 					}}
 				>
-					<Notification
-						title='Notification'
-						sx={{ width: '400px', position: 'absolute' }}
-						{...rest}
-						onClose={() => {
-							setNotification({
-								isOpen: false,
-							})
-						}}
-					>
-						{text || 'default text'}
-					</Notification>
+					<Box sx={{ width: '400px', position: 'absolute' }}>
+						{progress ? <Progress value={progress} /> : null}
+						<Notification title='Notification' {...rest}>
+							{text || 'default text'}
+						</Notification>
+					</Box>
 				</Box>
 			)}
 			<LoadingPage

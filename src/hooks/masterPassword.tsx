@@ -27,10 +27,7 @@ const context = createContext<{
 		newMasterPassword: string
 	}) => Promise<HttpsCallableResult<null>>
 	// @ts-expect-error
-}>({
-	masterPassword: null,
-	setMasterPassword: () => {},
-})
+}>({})
 
 export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 	const [masterPassword, setMasterPassword] = useState<string | null>(null)
@@ -68,7 +65,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 	const setupMasterPassword = (inputMasterPassword: string) => {
 		return callableCreator(setMasterPasswordSchema)(inputMasterPassword)
 			.then(result => {
-				setMasterPassword(masterPassword)
+				setMasterPassword(inputMasterPassword)
 				setNotificationSuccess({
 					text: 'Successfully added Master Password!',
 				})
@@ -89,14 +86,15 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			.then(result => {
 				const { data } = result
 				if (data) {
-					setMasterPassword(masterPassword)
+					setMasterPassword(inputMasterPassword)
 					setNotificationSuccess({
 						text: 'Everything Looks Good!',
 					})
 				} else {
 					setNotificationFailed({
-						text: 'Incorrect Master Password!',
+						text: 'No Master Password!',
 					})
+					throw Error('No Master Password!')
 				}
 				return result
 			})

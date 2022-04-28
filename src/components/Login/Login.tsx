@@ -1,5 +1,5 @@
 import React from 'react'
-import { Center, Text, Stack } from '@mantine/core'
+import { Center, Stack } from '@mantine/core'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import { auth } from 'firebaseHelper'
 import {
@@ -9,6 +9,7 @@ import {
 	TwitterAuthProvider,
 	OAuthProvider,
 } from 'firebase/auth'
+import { Text } from '../Text'
 
 const MicrosoftAuthProvider = new OAuthProvider('microsoft.com')
 const YahooAuthProvider = new OAuthProvider('yahoo.com')
