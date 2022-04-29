@@ -1,12 +1,31 @@
 # Read Me
 
-![password-manager]('./img1.png')
+![password-manager](./img1.png)
 
-[demo](https://password-manager-3f905.web.app/)
+**[Demo](https://password-manager-3f905.web.app/)**
 
-This is for learning purpose.
+Features:
 
-In practice, you should not commit functions/.secret/prod.json file to the repository.
+1. Add, edit and delete passwords
+2. prevent duplicated username + site combination passwords
+3. drag and drop to reorder passwords
+4. sort passwords
+5. search passwords
+6. change master password
+7. logout user upon idle
+8. super smooth UX
+9. reset all state upon log out
+10. API data validation on both ends
+11. full API type safety on both ends.
+12. Programmatically set env var in Firebase function(with type safety)
+13. impossible to use wrong Firebase function name on both end
+14. script for prod and dev
+15. CI
+16. Structured Code.
+
+Not only this code demonstrate how to make a password manager, but also how to scale the code and setup project for different environments. The only thing missing is tests.
+
+In practice, you should not commit `functions/.secret/prod.json` file to the repository. This repo is for learning purpose.
 
 ## Quick Start
 
