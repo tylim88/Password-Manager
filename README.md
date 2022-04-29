@@ -21,7 +21,7 @@ Features:
 13. impossible to use wrong Firebase function name on both end
 14. script for prod and dev
 15. CI
-16. Structured Code.
+16. Structured code
 17. Standardize Firebase function error handling and logging.
 18. Does not log errors in prod environment when processing Master Password to prevent accidentally logging sensitive data. Dev environment log everything.
 
