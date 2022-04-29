@@ -15,7 +15,15 @@ jobs:
       - run: npm i -g firebase-tools
       - run: npm run lint
       - run: npm run pretty-quick
-      - run: npm run p-build
+      - run: npm run build
+        env:
+          REACT_APP_apiKey: 'AIzaSyDCc8Qfv_b9a4YWTWmXkw9aJyo3R62WlSw'
+          REACT_APP_authDomain: 'password-manager-3f905.firebaseapp.com'
+          REACT_APP_projectId: 'password-manager-3f905'
+          REACT_APP_storageBucket: 'password-manager-3f905.appspot.com'
+          REACT_APP_messagingSenderId: '20518931267'
+          REACT_APP_appId: '1:20518931267:web:418f7db75b75e365b33df6'
+          REACT_APP_measurementId: 'G-EK468D7ZCK'
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
