@@ -2,8 +2,5 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npm run lint
-npm run f-lint
 npm run pretty-quick
-npm run f-pretty-quick
 npm run build 
-npm run f-build 

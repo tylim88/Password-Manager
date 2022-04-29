@@ -10,7 +10,7 @@ import {
 import { Lock, Id, World } from 'tabler-icons-react'
 import { usePasswordModal } from 'hooks'
 import { useForm } from '@mantine/form'
-import { updatePasswordsSchema, zodErrorHandling } from 'schema'
+import { passwordValidation, zodErrorHandling } from 'schema'
 import { HttpsCallableResult } from 'firebaseHelper'
 
 const Form = ({
@@ -19,7 +19,7 @@ const Form = ({
 	validate,
 }: {
 	initialValues: Secret
-	onRequest: (value: Secret) => Promise<HttpsCallableResult<null>>
+	onRequest: (value: Secret) => Promise<void>
 	validate: (values: { site: string; username: string }) => string | null
 }) => {
 	const [loading, setLoading] = useState(false)
@@ -28,9 +28,7 @@ const Form = ({
 		validate: {
 			site: (value, values) => {
 				try {
-					updatePasswordsSchema.req.shape.newPasswords.element.shape.site.parse(
-						value
-					)
+					passwordValidation.shape.site.parse(value)
 					return validate(values)
 				} catch (e) {
 					return zodErrorHandling(e)
@@ -38,9 +36,7 @@ const Form = ({
 			},
 			username: (value, values) => {
 				try {
-					updatePasswordsSchema.req.shape.newPasswords.element.shape.username.parse(
-						value
-					)
+					passwordValidation.shape.username.parse(value)
 					return validate(values)
 				} catch (e) {
 					return zodErrorHandling(e)
@@ -48,9 +44,7 @@ const Form = ({
 			},
 			password: value => {
 				try {
-					updatePasswordsSchema.req.shape.newPasswords.element.shape.password.parse(
-						value
-					)
+					passwordValidation.shape.password.parse(value)
 					return null
 				} catch (e) {
 					return zodErrorHandling(e)

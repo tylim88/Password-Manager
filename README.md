@@ -1,8 +1,6 @@
-# Read Me
+# Client Side Encryption
 
 ![password-manager](./img1.png)
-
-**[Demo](https://password-manager-3f905.web.app/)**
 
 Features:
 
@@ -31,11 +29,15 @@ Not only this code demonstrate how to make a password manager, but also how to s
 
 In practice, you should not commit `functions/.secret/prod.json` file to the repository. This repo is for learning purpose.
 
-Keep in mind if user lost their Master Password, they lose everything. Such mechanic IS A MUST because if you can recover it, it means you can access their site, username and password anytime you want.
+Keep in mind if user lost their Master Password, they lose everything. Such mechanic IS A MUST because if you can recover it, it means you can access their site, username and password anytime you want, your user is not safe from you!
 
 Is there any better way to encrypt passwords?
 
-Yes, a better way is client side encryption by using client's device secret. This keep any secret from reaching server at all. (Not demonstrated here)
+Yes, a better way is client side encryption by using client's device secret. User don't even need to memorize anything. (Not demonstrated here)
+
+You don't really need to hash master password, because if you failed to decrypt, then it basically means the master password is incorrect. It is just more intuitive to verify master password with hash. As long as you do not use anything you store in database as key, then your users passwords are safe from you.
+
+Looking for [server side encryption](https://github.com/tylim88/Password-Manager)?
 
 ## Quick Start
 
@@ -57,8 +59,3 @@ To go live:
 
 1. Run `npm run f-p-deploy` to deploy functions to prod.
 2. Commit your code, it will deploy hosting to prod.
-
-## Note
-
-1. The scripts automatically sync `functions/src/schema` to `src/scheme` but NOT vice versa, so you should only make change to `functions/src/schema`.
-2. You can manually sync it by using `npm run copy`.

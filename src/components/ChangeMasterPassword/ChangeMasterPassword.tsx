@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Center, Button, Group, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { updateMasterPasswordSchema, zodErrorHandling } from 'schema'
+import { zodErrorHandling, masterPasswordValidation } from 'schema'
 import { useMasterPassword } from 'hooks'
 import { Text } from '../Text'
 import { Lock } from 'tabler-icons-react'
@@ -19,7 +19,7 @@ export const ChangeMasterPassword = () => {
 		validate: {
 			oldMasterPassword: value => {
 				try {
-					updateMasterPasswordSchema.req.shape.oldMasterPassword.parse(value)
+					masterPasswordValidation.parse(value)
 					return masterPassword === value
 						? null
 						: 'Incorrect old master password'
@@ -29,7 +29,7 @@ export const ChangeMasterPassword = () => {
 			},
 			newMasterPassword: (value, values) => {
 				try {
-					updateMasterPasswordSchema.req.shape.newMasterPassword.parse(value)
+					masterPasswordValidation.parse(value)
 					return value === values.oldMasterPassword
 						? 'The New Master Password Is Similar To The Old One'
 						: null

@@ -7,8 +7,6 @@ type NonNullableKey<T, K extends keyof T> = OmitKeys<T, K> &
 		[index in K]: T[K]
 	}>
 
-type ENV = { env: { argon2_pepper: string; aes_secret: string; dev: string } }
-
 type Secret = {
 	username: string
 	site: string

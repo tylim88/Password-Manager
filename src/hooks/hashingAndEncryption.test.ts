@@ -10,7 +10,7 @@ describe('test hash and encryption', () => {
 		const masterPassword = 'nzye72318eo732ez73e'
 		const hash = await hashMasterPassword(masterPassword)
 
-		const isValid = await verifyMasterPasswordHash(hash, masterPassword)
+		const isValid = await verifyMasterPasswordHash({ hash, masterPassword })
 
 		expect(isValid).toBe(true)
 	})

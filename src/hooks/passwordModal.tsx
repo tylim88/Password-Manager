@@ -7,11 +7,10 @@ import React, {
 import { ModalProps } from '@mantine/core'
 import { useAuth } from './auth'
 import { usePasswords } from './passwords'
-import { HttpsCallableResult } from 'firebaseHelper'
 import { cloneDeep } from 'lodash'
 
 type Modal = ModalProps & { initialValues: Secret } & {
-	onRequest: (value: Secret) => Promise<HttpsCallableResult<null>>
+	onRequest: (value: Secret) => Promise<void>
 	validate: (values: { site: string; username: string }) => null | string
 }
 
@@ -26,7 +25,7 @@ const context = createContext<{
 
 export const PasswordModalProvider = (props: PropsWithChildren<{}>) => {
 	const [modal, setModal] = useState<Modal>({
-		onRequest: async () => ({ data: null }),
+		onRequest: async () => {},
 		onClose: () => {},
 		opened: false,
 		initialValues: { username: '', site: '', password: '' },
@@ -37,7 +36,7 @@ export const PasswordModalProvider = (props: PropsWithChildren<{}>) => {
 
 	const reset = () => {
 		setModal({
-			onRequest: async () => ({ data: null }),
+			onRequest: async () => {},
 			onClose: () => {},
 			opened: false,
 			initialValues: { username: '', site: '', password: '' },

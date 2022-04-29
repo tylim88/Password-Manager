@@ -4,13 +4,14 @@ import {
 	PropsWithChildren,
 	useCallback,
 } from 'react'
-import { callableCreator, HttpsCallableResult } from 'firebaseHelper'
-import { updatePasswordsSchema } from 'schema'
+import { userFirelordRef } from 'firebaseHelper'
 import { useAuth } from './auth'
 import { useNotification } from './notification'
 import { useMasterPassword } from './masterPassword'
 import { sortBy, cloneDeep } from 'lodash'
 import { useListState } from '@mantine/hooks'
+import { encryptPasswords } from './hashingAndEncryption'
+import { updateDoc } from 'firelordjs'
 
 const context = createContext<{
 	passwords: Secret[]
@@ -20,7 +21,7 @@ const context = createContext<{
 			username: string
 			site: string
 		}[]
-	) => Promise<HttpsCallableResult<null>>
+	) => Promise<void>
 	reorder: (indexes: { from: number; to: number }) => void
 	sort: () => void
 
@@ -36,7 +37,7 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 		setNotificationLoading,
 	} = useNotification()
 
-	const { resetCallbackObj } = useAuth()
+	const { resetCallbackObj, user } = useAuth()
 
 	const setPasswords = useCallback(
 		(passwords: Secret[]) => {
@@ -66,26 +67,30 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 			// this should never happen
 			throw Error('no master password or master password not verified yet')
 		}
+		if (!user) {
+			// this should never happen
+			throw Error('user not logged in')
+		}
 		const close = setNotificationLoading({ message: 'Updating Passwords...' })
 		setPasswords(newPasswords) // optimistic update
-		const result = await callableCreator(updatePasswordsSchema)({
-			masterPassword,
-			newPasswords,
+		const userRef = userFirelordRef.doc(user.uid)
+		// if hash is valid, re-encrypt passwords(if passwords exist)
+		const updateData: OmitKeys<User, 'masterPasswordHash'> = {
+			encryptedPasswords: await encryptPasswords(
+				JSON.stringify(newPasswords),
+				masterPassword
+			),
+		}
+		await updateDoc(userRef, updateData).catch(err => {
+			close()
+			setPasswords(passwords) // revert optimistic update
+			setNotificationFailed({
+				message: 'Failed to Update Passwords!',
+			})
+			throw err
 		})
-			.then(result => {
-				setNotificationSuccess({ message: 'Successfully Updated Passwords!' })
-				return result
-			})
-			.catch(err => {
-				close()
-				setPasswords(passwords) // revert optimistic update
-				setNotificationFailed({
-					message: 'Failed to Update Passwords!',
-				})
-				throw err
-			})
+		setNotificationSuccess({ message: 'Successfully Updated Passwords!' })
 		close()
-		return result
 	}
 
 	return (

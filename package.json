@@ -3,28 +3,20 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"reinstall": "rm -rf package-lock.json && npm i && npx husky install",
+		"reinstall": "rm -rf package-lock.json && rm -rf node_modules && npm i && npx husky install",
 		"lint": "eslint . --ext .js,.ts,.tsx --fix",
 		"pretty-quick": "pretty-quick --stage",
 		"use": "cross-env-shell \"firebase use $REACT_APP_projectId\"",
 		"tsc": "tsc",
-		"copy": "cp -r functions/src/schema src",
-		"build": "npm run copy && react-scripts build",
-		"test": "npm run copy && react-scripts test",
-		"start": "npm run copy && react-scripts start",
+		"build": "react-scripts build",
+		"test": "jest",
+		"start": "react-scripts start",
 		"dev": "===================================dev=======================================",
 		"d-start": "env-cmd -f .config/dev.env \"npm start\"",
 		"d-build": "env-cmd -f .config/dev.env \"npm run build\"",
 		"prod": "===================================prod======================================",
 		"p-start": "env-cmd -f .config/prod.env \"npm start\"",
-		"p-build": "env-cmd -f .config/prod.env \"npm run build\"",
-		"function": "++++++++++++++++++++++++++++function+++++++++++++++++++++++++++++++++++++",
-		"f-lint": "npm --prefix functions run lint",
-		"f-build": "npm --prefix functions run build",
-		"f-pretty-quick": "npm --prefix functions run pretty-quick",
-		"f-d-test": "npm --prefix functions run d-test",
-		"f-d-deploy": "npm --prefix functions run d-deploy",
-		"f-p-deploy": "npm --prefix functions run p-deploy"
+		"p-build": "env-cmd -f .config/prod.env \"npm run build\""
 	},
 	"eslintConfig": {
 		"extends": [
@@ -53,6 +45,7 @@
 		"@mantine/hooks": "^4.1.5",
 		"@mantine/notifications": "^4.2.1",
 		"argon2": "^0.28.5",
+		"argon2-browser": "^1.18.0",
 		"crypto-js": "^4.1.1",
 		"firebase": "^9.6.11",
 		"firelordjs": "^1.1.16",
@@ -68,9 +61,7 @@
 		"zod": "^3.14.4"
 	},
 	"devDependencies": {
-		"@testing-library/jest-dom": "^5.16.4",
-		"@testing-library/react": "^13.1.1",
-		"@testing-library/user-event": "^14.1.1",
+		"@types/argon2-browser": "^1.18.1",
 		"@types/crypto-js": "^4.1.1",
 		"@types/jest": "^27.4.1",
 		"@types/lodash": "^4.14.182",
@@ -85,7 +76,8 @@
 		"eslint-plugin-import": "^2.26.0",
 		"eslint-plugin-prettier": "^4.0.0",
 		"pretty-quick": "^3.1.3",
-		"react-scripts": "5.0.1",
+		"react-scripts": "^4.0.3",
+		"ts-jest": "^27.1.4",
 		"typescript": "^4.6.3"
 	}
 }
