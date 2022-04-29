@@ -30,6 +30,9 @@ export const verifyMasterPassword = onCallCreator(
 		if (valid) {
 			return getPassword(masterPassword, context.auth.uid)
 		}
-		throw Error('Incorrect Master Password')
+		return {
+			code: 'invalid-argument',
+			message: 'Incorrect Master Password',
+		} as const
 	}
 )
