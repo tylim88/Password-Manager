@@ -43,7 +43,7 @@ Looking for [server side encryption](https://github.com/tylim88/Password-Manager
 
 ## Quick Start
 
-1. `npm run reinstall && npm --prefix functions run reinstall`
+1. `npm run reinstall`
 2. change all the `REACT_APP_xxx` configs in `.github` folder to your own configs, you can use same config for both
 3. backup `.github` folder to other folder.
 4. `firebase init` setup Github Action deploys
