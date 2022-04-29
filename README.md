@@ -22,10 +22,20 @@ Features:
 14. script for prod and dev
 15. CI
 16. Structured Code.
+17. Standardize Firebase function error handling and logging.
+18. Does not log errors in prod environment when processing Master Password to prevent accidentally logging sensitive data. Dev environment log everything.
+
+etc etc
 
 Not only this code demonstrate how to make a password manager, but also how to scale the code and setup project for different environments. The only thing missing is tests.
 
 In practice, you should not commit `functions/.secret/prod.json` file to the repository. This repo is for learning purpose.
+
+Keep in mind if user lost their Master Password, they lose everything. Such mechanic IS A MUST because if you can recover it, it means you can access their site, username and password anytime you want.
+
+Is there any better way to encrypt passwords?
+
+Yes, a better way is client side encryption by using client's device secret. This keep any secret from reaching server at all. (Not demonstrated here)
 
 ## Quick Start
 
