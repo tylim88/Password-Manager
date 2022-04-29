@@ -2,23 +2,6 @@
 	"name": "password-manager",
 	"version": "0.1.0",
 	"private": true,
-	"dependencies": {
-		"@mantine/core": "^4.1.5",
-		"@mantine/form": "^4.1.5",
-		"@mantine/hooks": "^4.1.5",
-		"firebase": "^9.6.11",
-		"firelordjs": "^1.1.16",
-		"localforage": "^1.10.0",
-		"lodash": "^4.17.21",
-		"react": "^17.0.2",
-		"react-beautiful-dnd": "^13.1.0",
-		"react-dom": "^17.0.2",
-		"react-firebaseui": "^6.0.0",
-		"react-idle-timer": "^5.0.0-rc.24",
-		"tabler-icons-react": "^1.46.0",
-		"web-vitals": "^2.1.4",
-		"zod": "^3.14.4"
-	},
 	"scripts": {
 		"reinstall": "rm -rf package-lock.json && npm i && npx husky install",
 		"lint": "eslint . --ext .js,.ts,.tsx --fix",
@@ -64,6 +47,24 @@
 			"last 1 safari version"
 		]
 	},
+	"dependencies": {
+		"@mantine/core": "^4.1.5",
+		"@mantine/form": "^4.1.5",
+		"@mantine/hooks": "^4.1.5",
+		"@mantine/notifications": "^4.2.1",
+		"firebase": "^9.6.11",
+		"firelordjs": "^1.1.16",
+		"lodash": "^4.17.21",
+		"react": "^17.0.2",
+		"react-beautiful-dnd": "^13.1.0",
+		"react-dom": "^17.0.2",
+		"react-firebaseui": "^6.0.0",
+		"react-idle-timer": "^5.0.0-rc.24",
+		"tabler-icons-react": "^1.46.0",
+		"uuid": "^8.3.2",
+		"web-vitals": "^2.1.4",
+		"zod": "^3.14.4"
+	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/react": "^13.1.1",
@@ -74,6 +75,7 @@
 		"@types/react": "^17.0.2",
 		"@types/react-beautiful-dnd": "^13.1.2",
 		"@types/react-dom": "^17.0.2",
+		"@types/uuid": "^8.3.4",
 		"cross-env": "^7.0.3",
 		"env-cmd": "^10.1.0",
 		"pretty-quick": "^3.1.3",

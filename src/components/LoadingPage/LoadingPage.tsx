@@ -1,15 +1,15 @@
-import React, { PropsWithChildren } from 'react'
+import { PropsWithChildren } from 'react'
 import { useAuth, useUser } from 'hooks'
 import {
 	Center,
 	Loader,
 	Stack,
-	Text,
 	LoaderProps,
 	StackProps,
 	CenterProps,
 	TextProps,
 } from '@mantine/core'
+import { Text } from '../Text'
 
 export const LoadingPage = ({
 	loading,

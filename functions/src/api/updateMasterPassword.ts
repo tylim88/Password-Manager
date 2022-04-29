@@ -26,18 +26,32 @@ export const updateMasterPassword = onCallCreator(
 				} as const
 			}
 			const { masterPasswordHash, encryptedPasswords } = passwordsData
-			// if hash does not valid, return error
-			const valid = await verifyMasterPasswordHash(
+
+			// check if user reuse old master password as new master password
+			const isReuse = await verifyMasterPasswordHash(
+				masterPasswordHash,
+				newMasterPassword
+			)
+			if (isReuse) {
+				return {
+					code: 'invalid-argument',
+					message: 'please do not reuse old master password',
+				} as const
+			}
+
+			// check if old master password is correct, return error
+			const isValid = await verifyMasterPasswordHash(
 				masterPasswordHash,
 				oldMasterPassword
 			)
-			if (!valid) {
+			if (!isValid) {
 				return {
 					code: 'invalid-argument',
 					message: 'incorrect master password',
 				} as const
 			}
-			// if hash is valid, re-encrypt passwords(if passwords exist)
+
+			// if hash is valid, re-encrypt passwords if passwords exist
 			const setData: Passwords = {
 				masterPasswordHash: await hashMasterPassword(newMasterPassword),
 				encryptedPasswords: encryptedPasswords

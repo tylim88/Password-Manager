@@ -1,15 +1,14 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Center, Button, Group, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { updateMasterPasswordSchema, zodErrorHandling } from 'schema'
-import { useMasterPassword, useNotification } from 'hooks'
+import { useMasterPassword } from 'hooks'
 import { Text } from '../Text'
 import { Lock } from 'tabler-icons-react'
 
 export const ChangeMasterPassword = () => {
 	const [loading, setLoading] = useState(false)
 	const [submitError, setSubmitError] = useState<string | null>(null)
-	const { setNotificationLoading } = useNotification()
 	const { masterPassword, changeMasterPassword } = useMasterPassword()
 
 	const form = useForm({
@@ -47,9 +46,7 @@ export const ChangeMasterPassword = () => {
 					async ({ oldMasterPassword, newMasterPassword }) => {
 						setLoading(true)
 						setSubmitError(null)
-						setNotificationLoading({
-							text: 'Updating Master Password Please Wait...',
-						})
+
 						await changeMasterPassword({
 							oldMasterPassword,
 							newMasterPassword,
@@ -65,21 +62,17 @@ export const ChangeMasterPassword = () => {
 				)}
 				style={{ minWidth: 300 }}
 			>
-				<Text
-					weight='bold'
-					mb='sm'
-					sx={theme => ({
-						color: theme.colorScheme === 'dark' ? '#fff' : '#000',
-					})}
-				>
+				<Text weight='bold' mb='sm'>
 					Change Your Master Password!
 				</Text>
 				<PasswordInput
+					autoComplete='disabled'
 					label='Old Master Password'
 					icon={<Lock size={16} />}
 					{...form.getInputProps('oldMasterPassword')}
 				/>
 				<PasswordInput
+					autoComplete='disabled'
 					mt='sm'
 					label='New Master Password'
 					icon={<Lock size={16} />}

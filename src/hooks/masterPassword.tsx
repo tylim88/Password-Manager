@@ -12,10 +12,13 @@ import {
 } from 'schema'
 import { callableCreator, HttpsCallableResult } from 'firebaseHelper'
 import { useNotification } from 'hooks'
+import { v4 } from 'uuid'
 
 const context = createContext<{
 	masterPassword: string | null
 	setMasterPassword: React.Dispatch<React.SetStateAction<string | null>>
+	verifying: string
+	setVerifying: React.Dispatch<React.SetStateAction<string>>
 	verifyMasterPassword: (
 		inputMasterPassword: string
 	) => Promise<HttpsCallableResult<boolean>>
@@ -31,79 +34,107 @@ const context = createContext<{
 
 export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 	const [masterPassword, setMasterPassword] = useState<string | null>(null)
+	const [verifying, setVerifying] = useState('')
 	const { resetCallbackObj } = useAuth()
-	const { setNotificationFailed, setNotificationSuccess } = useNotification()
+	const {
+		setNotificationFailed,
+		setNotificationSuccess,
+		setNotificationLoading,
+	} = useNotification()
 
-	resetCallbackObj['masterPassword'] = () => setMasterPassword(null)
+	resetCallbackObj['masterPassword'] = () => {
+		setMasterPassword(null)
+		setVerifying('')
+	}
 
-	const changeMasterPassword = ({
+	const changeMasterPassword = async ({
 		oldMasterPassword,
 		newMasterPassword,
 	}: {
 		oldMasterPassword: string
 		newMasterPassword: string
 	}) => {
-		return callableCreator(updateMasterPasswordSchema)({
+		const close = setNotificationLoading({
+			message: 'Updating Master Password Please Wait...',
+		})
+		const result = await callableCreator(updateMasterPasswordSchema)({
 			oldMasterPassword,
 			newMasterPassword,
 		})
 			.then(result => {
 				setMasterPassword(newMasterPassword)
 				setNotificationSuccess({
-					text: 'Successfully updated Master Password!',
+					message: 'Successfully Updated Master Password!',
 				})
 				return result
 			})
 			.catch(e => {
 				setNotificationFailed({
-					text: 'Update Master Password Failed!',
+					message: 'Update Master Password Failed!',
 				})
 				throw e
 			})
+
+		close()
+		return result
 	}
 
-	const setupMasterPassword = (inputMasterPassword: string) => {
-		return callableCreator(setMasterPasswordSchema)(inputMasterPassword)
+	const setupMasterPassword = async (inputMasterPassword: string) => {
+		const close = setNotificationLoading({
+			message: 'Encrypting Master Password Please Wait...',
+		})
+		const result = await callableCreator(setMasterPasswordSchema)(
+			inputMasterPassword
+		)
 			.then(result => {
 				setMasterPassword(inputMasterPassword)
 				setNotificationSuccess({
-					text: 'Successfully added Master Password!',
+					message: 'Successfully Added Master Password!',
 				})
 
 				return result
 			})
 			.catch(e => {
 				setNotificationFailed({
-					text: 'Something Went Wrong!',
+					message: 'Something Went Wrong!',
 				})
 
 				throw e
 			})
+		close()
+		return result
 	}
 
-	const verifyMasterPassword = (inputMasterPassword: string) => {
-		return callableCreator(verifyMasterPasswordSchema)(inputMasterPassword)
+	const verifyMasterPassword = async (inputMasterPassword: string) => {
+		const id = v4()
+		setVerifying(id)
+		setNotificationLoading({
+			id,
+			message: 'Decrypting Passwords Please Wait...',
+		}) // close in password
+		const result = await callableCreator(verifyMasterPasswordSchema)(
+			inputMasterPassword
+		)
 			.then(result => {
 				const { data } = result
 				if (data) {
 					setMasterPassword(inputMasterPassword)
-					setNotificationSuccess({
-						text: 'Everything Looks Good!',
-					})
+					// continue on notification hook
 				} else {
+					// this should not happen, page hook takes care of this
 					setNotificationFailed({
-						text: 'No Master Password!',
+						message: 'No Master Password!',
 					})
-					throw Error('No Master Password!')
 				}
 				return result
 			})
 			.catch(e => {
 				setNotificationFailed({
-					text: 'Master Password Verification Failed',
+					message: 'Incorrect Master Password!',
 				})
 				throw e
 			})
+		return result
 	}
 
 	return (
@@ -114,6 +145,8 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				verifyMasterPassword,
 				setupMasterPassword,
 				changeMasterPassword,
+				verifying,
+				setVerifying,
 			}}
 			{...props}
 		/>

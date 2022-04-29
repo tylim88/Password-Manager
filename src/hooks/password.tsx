@@ -1,4 +1,4 @@
-import React, {
+import {
 	useContext,
 	createContext,
 	PropsWithChildren,
@@ -10,9 +10,9 @@ import { getPasswordsSchema, updatePasswordsSchema } from 'schema'
 import { useAuth } from './auth'
 import { useNotification } from './notification'
 import { useMasterPassword } from './masterPassword'
-import { sortBy } from 'lodash'
+import { sortBy, cloneDeep } from 'lodash'
 import { useListState } from '@mantine/hooks'
-
+import { updateNotification } from '@mantine/notifications'
 const context = createContext<{
 	passwords: Secret[]
 	updatePasswords: (
@@ -22,7 +22,7 @@ const context = createContext<{
 			site: string
 		}[]
 	) => Promise<HttpsCallableResult<null>>
-	reorder: (from: number, to: number) => void
+	reorder: (indexes: { from: number; to: number }) => void
 	sort: () => void
 
 	// @ts-expect-error
@@ -30,8 +30,12 @@ const context = createContext<{
 
 export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 	const [passwords, handlers] = useListState<Secret>([])
-	const { masterPassword } = useMasterPassword()
-	const { setNotificationFailed, setNotificationSuccess } = useNotification()
+	const { masterPassword, setVerifying, verifying } = useMasterPassword()
+	const {
+		setNotificationFailed,
+		setNotificationSuccess,
+		setNotificationLoading,
+	} = useNotification()
 
 	const { resetCallbackObj } = useAuth()
 
@@ -39,52 +43,71 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 		(passwords: Secret[]) => {
 			return handlers.setState(passwords)
 		},
-		[handlers]
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[] // !do not add handler as dependency!!
 	)
 
-	const reorder = (from: number, to: number) => handlers.reorder({ from, to })
+	const reorder = ({ from, to }: { from: number; to: number }) => {
+		// does not use the useListState reorder hook because updating via useEffect is problematic
+		const newPasswords = cloneDeep(passwords)
+		const target = newPasswords.splice(from, 1)
+		const head = newPasswords.slice(0, to)
+		const tail = newPasswords.slice(to)
+		updatePasswords([...head, ...target, ...tail])
+	}
 
-	const sort = () => setPasswords(sortBy(passwords, ['site', 'username']))
+	const sort = () => updatePasswords(sortBy(passwords, ['site', 'username']))
 
 	useEffect(() => {
-		masterPassword &&
-			callableCreator(getPasswordsSchema)(masterPassword)
-				.then(result => {
-					const data = result.data
-					setPasswords(data)
-				})
-				.catch(err => {
-					setNotificationFailed({
-						text: 'Failed to load passwords!',
-						timeout: 0,
+		const getPasswords = async () => {
+			masterPassword &&
+				(await callableCreator(getPasswordsSchema)(masterPassword)
+					.then(result => {
+						const data = result.data
+						setPasswords(data)
+						setNotificationSuccess({
+							message: 'Successfully Loaded Passwords!',
+						})
 					})
-				})
-	}, [setPasswords, masterPassword, setNotificationFailed])
+					.catch(err => {
+						setNotificationFailed({
+							message: 'Failed To Load Passwords!',
+						})
+					}))
+			setVerifying('')
+			updateNotification({ id: verifying, message: '', autoClose: 0 })
+		}
+		getPasswords()
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [setPasswords, masterPassword, setNotificationFailed, setVerifying]) // ! careful may cause infinite call
 
 	resetCallbackObj['passwords'] = () => setPasswords([])
 
-	const updatePasswords = (newPasswords: Secret[]) => {
+	const updatePasswords = async (newPasswords: Secret[]) => {
 		if (!masterPassword) {
 			// this should never happen
 			throw Error('no master password or master password not verified yet')
 		}
-
-		return callableCreator(updatePasswordsSchema)({
+		const close = setNotificationLoading({ message: 'Updating Passwords...' })
+		setPasswords(newPasswords) // optimistic update
+		const result = await callableCreator(updatePasswordsSchema)({
 			masterPassword,
 			newPasswords,
 		})
 			.then(result => {
-				setPasswords(newPasswords)
-				setNotificationSuccess({ text: 'Successfully updated passwords!' })
+				setNotificationSuccess({ message: 'Successfully Updated Passwords!' })
 				return result
 			})
 			.catch(err => {
+				setPasswords(passwords) // revert optimistic update
 				setNotificationFailed({
-					text: 'Failed to update passwords!',
-					timeout: 0,
+					message: 'Failed to Update Passwords!',
 				})
 				throw err
 			})
+		close()
+		return result
 	}
 
 	return (

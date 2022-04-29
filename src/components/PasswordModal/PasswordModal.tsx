@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
 	Modal,
 	Button,
@@ -9,13 +10,19 @@ import {
 import { Lock, Id, World } from 'tabler-icons-react'
 import { usePasswordModal } from 'hooks'
 import { useForm } from '@mantine/form'
-import { updatePasswordsSchema } from 'schema'
+import { updatePasswordsSchema, zodErrorHandling } from 'schema'
+import { HttpsCallableResult } from 'firebaseHelper'
 
-export const PasswordModal = () => {
-	const {
-		modal: { initialValues, validate, onRequest, ...rest },
-	} = usePasswordModal()
-
+const Form = ({
+	initialValues,
+	onRequest,
+	validate,
+}: {
+	initialValues: Secret
+	onRequest: (value: Secret) => Promise<HttpsCallableResult<null>>
+	validate: (values: { site: string; username: string }) => string | null
+}) => {
+	const [loading, setLoading] = useState(false)
 	const form = useForm({
 		initialValues,
 		validate: {
@@ -26,7 +33,7 @@ export const PasswordModal = () => {
 					)
 					return validate(values)
 				} catch (e) {
-					return 'Invalid site'
+					return zodErrorHandling(e)
 				}
 			},
 			username: (value, values) => {
@@ -36,7 +43,7 @@ export const PasswordModal = () => {
 					)
 					return validate(values)
 				} catch (e) {
-					return 'Invalid username'
+					return zodErrorHandling(e)
 				}
 			},
 			password: value => {
@@ -46,36 +53,68 @@ export const PasswordModal = () => {
 					)
 					return null
 				} catch (e) {
-					return 'Invalid password'
+					return zodErrorHandling(e)
 				}
 			},
 		},
 	})
 	return (
-		<Modal size='md' {...rest}>
-			<form onSubmit={form.onSubmit(values => onRequest(values))}>
-				<Stack>
-					<TextInput
-						placeholder='https://example.com'
-						label='Site'
-						icon={<World size={16} />}
-					/>
-					<TextInput
-						placeholder='example@mail.com'
-						label='Username'
-						icon={<Id size={16} />}
-					/>
-					<PasswordInput
-						disabled
-						placeholder='********'
-						label='Password'
-						icon={<Lock size={16} />}
-					/>
-					<Group position='right' mt='md'>
-						<Button type='submit'>Submit</Button>
-					</Group>
-				</Stack>
-			</form>
+		<form
+			onSubmit={form.onSubmit(async values => {
+				setLoading(true)
+				await onRequest(values).catch(e => {})
+				setLoading(false)
+			})}
+		>
+			<Stack>
+				<TextInput
+					required
+					autoComplete='disabled'
+					placeholder='https://example.com'
+					label='Site'
+					icon={<World size={16} />}
+					{...form.getInputProps('site')}
+				/>
+				<TextInput
+					required
+					autoComplete='disabled'
+					placeholder='example@mail.com'
+					label='Username'
+					icon={<Id size={16} />}
+					{...form.getInputProps('username')}
+				/>
+				<PasswordInput
+					required
+					autoComplete='disabled'
+					placeholder='********'
+					label='Password'
+					icon={<Lock size={16} />}
+					{...form.getInputProps('password')}
+				/>
+			</Stack>
+			<Group position='right' mt='md'>
+				<Button type='submit' loading={loading}>
+					{loading ? 'Submit' : 'Submitting'}
+				</Button>
+			</Group>
+		</form>
+	)
+}
+
+export const PasswordModal = () => {
+	const {
+		modal: { initialValues, validate, onRequest, opened, ...rest },
+	} = usePasswordModal()
+
+	return (
+		<Modal size='md' {...rest} opened={opened}>
+			{opened ? ( // remount Form on open to reset useForm with different initialState
+				<Form
+					initialValues={initialValues}
+					validate={validate}
+					onRequest={onRequest}
+				/>
+			) : null}
 		</Modal>
 	)
 }

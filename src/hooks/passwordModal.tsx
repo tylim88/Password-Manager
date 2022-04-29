@@ -8,7 +8,7 @@ import { ModalProps } from '@mantine/core'
 import { useAuth } from './auth'
 import { usePasswords } from './password'
 import { HttpsCallableResult } from 'firebaseHelper'
-import { cloneDeep, find } from 'lodash'
+import { cloneDeep } from 'lodash'
 
 type Modal = ModalProps & { initialValues: Secret } & {
 	onRequest: (value: Secret) => Promise<HttpsCallableResult<null>>
@@ -18,9 +18,9 @@ type Modal = ModalProps & { initialValues: Secret } & {
 const context = createContext<{
 	modal: Modal
 	setModal: React.Dispatch<React.SetStateAction<Modal>>
-	editPassword: (initialValues: Secret, index: number) => void
-	addPassword: (initialValues: Secret, index: number) => void
-	deletePassword: (initialValues: Secret, index: number) => void
+	editPassword: (index: number) => void
+	addPassword: () => void
+	deletePassword: (index: number) => void
 	// @ts-expect-error
 }>({})
 
@@ -35,7 +35,7 @@ export const PasswordModalProvider = (props: PropsWithChildren<{}>) => {
 	const { resetCallbackObj } = useAuth()
 	const { passwords, updatePasswords } = usePasswords()
 
-	const reset = () =>
+	const reset = () => {
 		setModal({
 			onRequest: async () => ({ data: null }),
 			onClose: () => {},
@@ -43,62 +43,61 @@ export const PasswordModalProvider = (props: PropsWithChildren<{}>) => {
 			initialValues: { username: '', site: '', password: '' },
 			validate: () => null,
 		})
+	}
 
 	resetCallbackObj['modal'] = reset
 
-	const editPassword = (initialValues: Secret, index: number) => {
-		setModal({
-			onClose: reset,
-			onRequest: async (value: Secret) => {
-				const newPasswords = cloneDeep(passwords)
-				newPasswords[index] = value
-				return updatePasswords(newPasswords)
-			},
-			opened: true,
-			title: 'Edit Password',
-			validate: isUnique(initialValues),
-			initialValues,
-		})
-	}
-
-	const deletePassword = (initialValues: Secret, index: number) => {
-		setModal({
-			onClose: reset,
-			onRequest: async (value: Secret) => {
-				const newPasswords = cloneDeep(passwords)
-				newPasswords[index] = value
-				return updatePasswords(newPasswords)
-			},
-			opened: true,
-			title: 'Delete Password',
-			validate: isUnique(initialValues),
-			initialValues,
-		})
-	}
-
 	const isUnique =
-		(oldValues: { site: string; username: string }) =>
-		(newValues: { site: string; username: string }) => {
-			const exist = find(passwords, newValues)
-			if (
-				oldValues.site !== newValues.site &&
-				oldValues.username !== newValues.username &&
-				exist
-			) {
-				return 'Site and username already exist'
+		(index: number) =>
+		({ site, username }: { site: string; username: string }) => {
+			const arr = passwords.reduce<number[]>((acc, item, i) => {
+				item.site === site &&
+					item.username === username &&
+					i !== index &&
+					acc.push(index)
+				return acc
+			}, [])
+			if (arr.length) {
+				return 'Site and username combination already exist'
 			}
 			return null
 		}
 
-	const addPassword = (initialValues: Secret) => {
+	const editPassword = (index: number) => {
+		const initialValues = cloneDeep(passwords)[index]
+		initialValues &&
+			setModal({
+				onClose: reset,
+				onRequest: async (value: Secret) => {
+					const newPasswords = cloneDeep(passwords)
+					newPasswords[index] = value
+					reset()
+					return updatePasswords(newPasswords)
+				},
+				opened: true,
+				title: 'Edit Password',
+				validate: isUnique(index),
+				initialValues,
+			})
+	}
+
+	const deletePassword = (index: number) => {
+		const newPasswords = cloneDeep(passwords)
+		newPasswords.splice(index, 1)
+		return updatePasswords(newPasswords)
+	}
+
+	const addPassword = () => {
+		const initialValues = { site: '', username: '', password: '' }
 		setModal({
 			onClose: reset,
 			onRequest: async (value: Secret) => {
-				const newPasswords = [value, ...passwords]
+				const newPasswords = [value, ...cloneDeep(passwords)]
+				reset()
 				return updatePasswords(newPasswords)
 			},
 			opened: true,
-			validate: isUnique(initialValues),
+			validate: isUnique(-1),
 			title: 'Add New Password',
 			initialValues,
 		})

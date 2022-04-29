@@ -1,4 +1,4 @@
-import React, {
+import {
 	useContext,
 	createContext,
 	PropsWithChildren,
@@ -30,7 +30,10 @@ export const UserProvider = (props: PropsWithChildren<{}>) => {
 	const { user: userFromAuth, resetCallbackObj } = useAuth()
 	const [loading, setLoading] = useState(true)
 
-	resetCallbackObj['user'] = () => setUser(undefined)
+	resetCallbackObj['user'] = () => {
+		setUser(undefined)
+		setLoading(false)
+	}
 	const userUid = userFromAuth?.uid
 
 	useEffect(() => {

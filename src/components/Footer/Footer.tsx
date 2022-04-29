@@ -1,4 +1,3 @@
-import React from 'react'
 import { Footer as FooterR, Anchor } from '@mantine/core'
 import { BrandGithub } from 'tabler-icons-react'
 

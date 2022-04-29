@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
 	AppShell as AppShellR,
 	Navbar,
@@ -69,12 +69,12 @@ export const AppShell = () => {
 							<ActionIcon
 								variant='default'
 								onClick={() => toggleColorScheme()}
-								size={30}
+								size='lg'
 							>
 								{colorScheme === 'dark' ? (
-									<Sun size={16} />
+									<Sun size={24} />
 								) : (
-									<MoonStars size={16} />
+									<MoonStars size={24} />
 								)}
 							</ActionIcon>
 						</Group>

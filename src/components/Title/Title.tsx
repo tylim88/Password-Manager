@@ -1,4 +1,3 @@
-import React from 'react'
 import { Title as TitleU, TitleProps } from '@mantine/core'
 
 export const Title = ({ sx, color, ...rest }: TitleProps) => {

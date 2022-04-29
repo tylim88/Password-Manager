@@ -6,7 +6,7 @@ import * as childProcess from 'child_process'
 const spawn = childProcess.spawn
 
 const setEnv = async () => {
-	const ENV: ENV = process.env.DEV
+	const ENV = process.env.DEV
 		? await import('../.secret/dev.json')
 		: await import('../.secret/prod.json')
 

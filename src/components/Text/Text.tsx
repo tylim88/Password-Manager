@@ -1,4 +1,3 @@
-import React from 'react'
 import { Text as TextU, TextProps } from '@mantine/core'
 
 export const Text = <C = 'div',>({ sx, color, ...rest }: TextProps<C>) => {
@@ -6,9 +5,13 @@ export const Text = <C = 'div',>({ sx, color, ...rest }: TextProps<C>) => {
 	return (
 		<TextU
 			sx={[
-				theme => ({
-					color: color || theme.colorScheme === 'dark' ? '#fff' : '#000',
-				}),
+				theme => {
+					return {
+						color:
+							color ||
+							(theme.colorScheme === 'dark' ? theme.colors.dark[0] : '#000'),
+					}
+				},
 				...sx_,
 			]}
 			{...rest}

@@ -55,12 +55,13 @@ export const onCallCreator = <
 					  >
 					| {
 							code: 'ok'
-							data: keyof Q extends keyof z.infer<T['res']> ? Q : never
+							data: keyof Q extends keyof z.infer<T['res']> ? Q : never // ensure exact object shape
 					  }
 	>
 ) => {
 	const { route, toLogDetails } = config
 	return functions.https.onCall(async (data, context) => {
+		// auth validation
 		if (!context.auth && route === 'private') {
 			throwAndLogHttpsError({
 				code: 'unauthenticated',
@@ -68,6 +69,8 @@ export const onCallCreator = <
 				toLogDetails,
 			})
 		}
+
+		// data validation
 		try {
 			schema.req.parse(data)
 		} catch (e) {
@@ -79,38 +82,38 @@ export const onCallCreator = <
 			})
 		}
 
-		try {
-			const res = await handler(
-				data,
-				context as NonNullableKey<functions.https.CallableContext, 'auth'>
-			)
-			if (res.code === 'ok') {
-				// rare error
-				try {
-					schema.res.parse(res.data)
-				} catch (e) {
-					throwAndLogHttpsError({
-						code: 'internal',
-						message: 'output data malformed',
-						details: e,
-						toLogDetails,
-					})
-				}
-				return res.data
-			} else {
-				throwAndLogHttpsError({
-					code: res.code,
-					details: res.details,
-					message: res.message,
-					logType: res.logType,
-					toLogDetails,
-				})
-			}
-		} catch (err) {
-			throwAndLogHttpsError({
+		const res = await handler(
+			data,
+			context as NonNullableKey<functions.https.CallableContext, 'auth'>
+		).catch(err => {
+			// unknown error
+			return throwAndLogHttpsError({
 				code: 'unknown',
 				message: 'unknown error',
 				details: err,
+				toLogDetails,
+			})
+		})
+		if (res.code === 'ok') {
+			// validate output, rare error
+			try {
+				schema.res.parse(res.data)
+			} catch (e) {
+				throwAndLogHttpsError({
+					code: 'internal',
+					message: 'output data malformed',
+					details: e,
+					toLogDetails,
+				})
+			}
+			return res.data
+		} else {
+			// thrown known error
+			throwAndLogHttpsError({
+				code: res.code,
+				details: res.details,
+				message: res.message,
+				logType: res.logType,
 				toLogDetails,
 			})
 		}

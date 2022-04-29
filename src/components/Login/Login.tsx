@@ -1,4 +1,3 @@
-import React from 'react'
 import { Center, Stack } from '@mantine/core'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import { auth } from 'firebaseHelper'

@@ -1,4 +1,3 @@
-import React from 'react'
 import {
 	UnstyledButton,
 	Group,
@@ -48,7 +47,15 @@ export const User = () => {
 							<Text size='sm' weight={500}>
 								{user.displayName}
 							</Text>
-							<Text color='dimmed' size='xs'>
+							<Text
+								sx={theme => ({
+									color:
+										theme.colorScheme === 'dark'
+											? theme.colors.dark[2]
+											: theme.colors.gray[6],
+								})}
+								size='xs'
+							>
 								{user.email}
 							</Text>
 						</Box>

@@ -1,103 +1,165 @@
+import { useState } from 'react'
 import {
 	Group,
-	Box,
-	Code,
+	Grid,
 	Button,
-	Center,
 	ActionIcon,
 	PasswordInput,
+	Stack,
+	TextInput,
 } from '@mantine/core'
-import { useForm, formList } from '@mantine/form'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { Trash, Edit, GripVertical } from 'tabler-icons-react'
-import { usePasswords, usePasswordModal } from 'hooks'
+import { Trash, Edit, GripVertical, Search } from 'tabler-icons-react'
+import { usePasswords, usePasswordModal, useMasterPassword } from 'hooks'
 import { Text } from '../Text'
 
 export const PasswordList = () => {
-	const { passwords, reorder } = usePasswords()
-	const { addPassword } = usePasswordModal()
+	const { passwords, reorder, sort } = usePasswords()
+	const { addPassword, editPassword, deletePassword } = usePasswordModal()
+	const [filter, setFilter] = useState('')
+	const { verifying } = useMasterPassword()
 
-	const form = useForm({
-		initialValues: {
-			passwords: formList(passwords),
-		},
-	})
-
-	const fields = form.values.passwords.map((_, index) => (
-		<Draggable key={index} index={index} draggableId={index.toString()}>
-			{provided => (
-				<Group ref={provided.innerRef} mt='xs' {...provided.draggableProps}>
-					<Center {...provided.dragHandleProps}>
-						<GripVertical size={18} />
-					</Center>
-					<Text {...form.getListInputProps('passwords', index, 'site')} />
-					<Text
-						placeholder='example@mail.com'
-						{...form.getListInputProps('passwords', index, 'username')}
-					/>
-					<PasswordInput
-						disabled
-						placeholder='********'
-						{...form.getListInputProps('passwords', index, 'password')}
-					/>
-					<ActionIcon
-						color='blue'
-						variant='hover'
-						onClick={() => form.removeListItem('passwords', index)}
+	const fields = passwords
+		.filter(item => {
+			return item.site.includes(filter) || item.username.includes(filter)
+		})
+		.map((item, index) => (
+			<Draggable key={index} index={index} draggableId={index.toString()}>
+				{provided => (
+					<Group
+						ref={provided.innerRef}
+						mt='xs'
+						{...(filter ? {} : provided.draggableProps)}
 					>
-						<Edit size={16} />
-					</ActionIcon>
-					<ActionIcon
-						color='red'
-						variant='hover'
-						onClick={() => form.removeListItem('passwords', index)}
-					>
-						<Trash size={16} />
-					</ActionIcon>
-				</Group>
-			)}
-		</Draggable>
-	))
+						<Grid sx={{ width: '100%' }} columns={24}>
+							<Grid.Col
+								span={2}
+								{...(filter ? {} : provided.dragHandleProps)}
+								sx={theme => ({
+									color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+									justifyContent: 'center',
+									alignItems: 'center',
+									display: 'flex',
+								})}
+							>
+								<GripVertical size={18} />
+							</Grid.Col>
+							<Grid.Col span={6}>
+								<TextInput value={item.site} readOnly />
+							</Grid.Col>
+							<Grid.Col span={6}>
+								<TextInput value={item.username} readOnly />
+							</Grid.Col>
+							<Grid.Col span={6}>
+								<PasswordInput value={item.password} readOnly />
+							</Grid.Col>
+							<Grid.Col
+								span={2}
+								sx={{
+									justifyContent: 'center',
+									alignItems: 'center',
+									display: 'flex',
+								}}
+							>
+								<ActionIcon
+									color='blue'
+									variant='filled'
+									onClick={() => {
+										editPassword(index)
+									}}
+								>
+									<Edit size={16} />
+								</ActionIcon>
+							</Grid.Col>
+							<Grid.Col
+								span={2}
+								sx={{
+									alignItems: 'center',
+									display: 'flex',
+								}}
+							>
+								<ActionIcon
+									color='red'
+									variant='outline'
+									onClick={() => {
+										deletePassword(index)
+									}}
+								>
+									<Trash size={16} />
+								</ActionIcon>
+							</Grid.Col>
+						</Grid>
+					</Group>
+				)}
+			</Draggable>
+		))
 
 	return (
-		<Box sx={{ maxWidth: 500 }} mx='auto'>
+		<Stack
+			sx={{ maxWidth: 750, pointerEvents: verifying ? 'none' : 'auto' }} // disable user interaction while decrypting passwords
+			mt='xl'
+			mx='auto'
+		>
+			<Text
+				align='center'
+				weight={'bolder'}
+				sx={theme => ({
+					color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+				})}
+			>
+				Password Lists
+			</Text>
+			<Grid mt='md'>
+				<Grid.Col span={6}>
+					<Group>
+						<Button onClick={addPassword}>Add Password</Button>
+						<Button onClick={sort}>Sort Passwords</Button>
+					</Group>
+				</Grid.Col>
+				<Grid.Col span={6} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+					<TextInput
+						onChange={event => {
+							setFilter(event.target.value)
+						}}
+						placeholder='Search'
+						icon={<Search size={16} />}
+						sx={{ maxWidth: '250px' }}
+					/>
+				</Grid.Col>
+			</Grid>
 			{fields.length > 0 ? (
-				<Group mb='xs'>
-					<Text weight={500} size='sm' sx={{ flex: 1 }}>
-						Name
-					</Text>
-					<Text weight={500} size='sm' pr={90}>
-						Status
-					</Text>
+				<Group mt='xs'>
+					<Grid sx={{ width: '100%' }} columns={24}>
+						<Grid.Col span={2}></Grid.Col>
+						<Grid.Col span={6}>
+							<Text weight={500} size='sm' align='center'>
+								Site
+							</Text>
+						</Grid.Col>
+						<Grid.Col span={6}>
+							<Text weight={500} size='sm' sx={{ flex: 1 }} align='center'>
+								Username
+							</Text>
+						</Grid.Col>
+						<Grid.Col span={6}>
+							<Text weight={500} size='sm' sx={{ flex: 1 }} align='center'>
+								Password
+							</Text>
+						</Grid.Col>
+						<Grid.Col span={2}></Grid.Col>
+						<Grid.Col span={2}></Grid.Col>
+					</Grid>
 				</Group>
-			) : (
-				<Text color='dimmed' align='center'>
-					Password Lists
-				</Text>
-			)}
-
-			<Group position='center' mt='md'>
-				<Button
-					onClick={() =>
-						form.addListItem('passwords', {
-							site: '',
-							username: '',
-							password: '',
-						})
-					}
-				>
-					Add Password
-				</Button>
-			</Group>
+			) : null}
 
 			<DragDropContext
-				onDragEnd={({ destination, source }) =>
-					destination?.index &&
-					form.reorderListItem('passwords', {
-						from: source.index,
-						to: destination.index,
-					})
-				}
+				onDragEnd={({ destination, source }) => {
+					destination?.index !== undefined &&
+						reorder({
+							from: source.index,
+							to: destination.index,
+						})
+				}}
 			>
 				<Droppable droppableId='dnd-list' direction='vertical'>
 					{provided => (
@@ -108,11 +170,6 @@ export const PasswordList = () => {
 					)}
 				</Droppable>
 			</DragDropContext>
-
-			<Text size='sm' weight={500} mt='md'>
-				Form values:
-			</Text>
-			<Code block>{JSON.stringify(form.values, null, 2)}</Code>
-		</Box>
+		</Stack>
 	)
 }

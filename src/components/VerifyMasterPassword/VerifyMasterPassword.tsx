@@ -1,15 +1,14 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Center, Button, Group, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { verifyMasterPasswordSchema, zodErrorHandling } from 'schema'
-import { useMasterPassword, useNotification } from 'hooks'
+import { useMasterPassword } from 'hooks'
 import { Lock } from 'tabler-icons-react'
 import { Text } from '../Text'
 
 export const VerifyMasterPassword = () => {
 	const [loading, setLoading] = useState(false)
 	const [submitError, setSubmitError] = useState<string | null>(null)
-	const { setNotificationLoading } = useNotification()
 	const { verifyMasterPassword } = useMasterPassword()
 
 	const form = useForm({
@@ -33,26 +32,19 @@ export const VerifyMasterPassword = () => {
 				onSubmit={form.onSubmit(async ({ masterPassword }) => {
 					setLoading(true)
 					setSubmitError(null)
-					setNotificationLoading({
-						text: 'Verifying Master Password Please Wait...',
-					})
+
 					await verifyMasterPassword(masterPassword).catch(e => {
-						setLoading(false)
+						setLoading(false) // this line dont need to be outside as page will "redirect" after success
 						setSubmitError(`Error: ${e.message}`)
 					})
 				})}
 				style={{ minWidth: 300 }}
 			>
-				<Text
-					weight='bold'
-					mb='sm'
-					sx={theme => ({
-						color: theme.colorScheme === 'dark' ? '#fff' : '#000',
-					})}
-				>
+				<Text weight='bold' mb='sm'>
 					Welcome Back, Please Reenter Your Master Password!
 				</Text>
 				<PasswordInput
+					autoComplete='disabled'
 					label='Master Password'
 					icon={<Lock size={16} />}
 					{...form.getInputProps('masterPassword')}

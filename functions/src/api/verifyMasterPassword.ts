@@ -26,7 +26,9 @@ export const verifyMasterPassword = onCallCreator(
 			masterPasswordHash,
 			masterPassword
 		)
-
-		return { code: 'ok', data: valid } as const
+		if (valid) {
+			return { code: 'ok', data: valid } as const
+		}
+		throw Error('Incorrect Master Password')
 	}
 )

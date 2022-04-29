@@ -9,6 +9,7 @@
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
 		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
 		"module": "commonJS",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,

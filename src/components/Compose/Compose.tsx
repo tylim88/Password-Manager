@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, FC } from 'react'
+import { PropsWithChildren, FC } from 'react'
 
 // https://stackoverflow.com/a/58924810/5338829
 export const Compose = (

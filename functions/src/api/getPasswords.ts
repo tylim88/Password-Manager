@@ -12,9 +12,7 @@ export const getPasswords = onCallCreator(
 			const { encryptedPasswords } = data
 			if (encryptedPasswords) {
 				const decrypted = decryptPasswords(encryptedPasswords, masterPassword)
-				console.log(decrypted)
 				const parsed = JSON.parse(decrypted) as Secret[]
-				console.log(parsed)
 				return { code: 'ok', data: parsed }
 			}
 			return { code: 'ok', data: [] }

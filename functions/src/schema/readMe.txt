@@ -1,0 +1,1 @@
+front end and back end share this folder, it provides endpoint validator and data type

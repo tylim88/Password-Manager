@@ -1,4 +1,3 @@
-import React from 'react'
 import {
 	List,
 	Login,
@@ -74,27 +73,35 @@ export const MainLinks = () => {
 
 	return (
 		<LoadingPage
-			loaderProps={{ size: 'xl', variant: 'bars' }}
-			textProps={{ sx: { display: 'none' } }}
+			loaderProps={{
+				size: 'xl',
+				variant: 'bars',
+			}}
+			stackProps={{
+				sx: {
+					display: 'flex',
+					alignItems: 'center',
+				},
+			}}
 		>
 			<div>{links}</div>
 		</LoadingPage>
 	)
 }
 const logout = {
-	icon: <Logout size={24} />,
-	color: 'violet',
+	icon: <Logout size={20} />,
+	color: 'red',
 	label: 'Logout',
 } as const
 
 const Private = [
 	{
-		icon: <List size={24} />,
-		color: 'grape',
+		icon: <List size={20} />,
+		color: 'green',
 		label: 'Password List',
 	},
 	{
-		icon: <LockSquare size={24} />,
+		icon: <LockSquare size={20} />,
 		color: 'blue',
 		label: 'Change Master Password',
 	},
@@ -103,7 +110,7 @@ const Private = [
 
 const Setup = [
 	{
-		icon: <LockAccess size={24} />,
+		icon: <LockAccess size={20} />,
 		color: 'blue',
 		label: 'Setup Master Password',
 	},
@@ -112,7 +119,7 @@ const Setup = [
 
 const Verify = [
 	{
-		icon: <Id size={24} />,
+		icon: <Id size={20} />,
 		color: 'blue',
 		label: 'Verify Master Password',
 	},
@@ -121,7 +128,7 @@ const Verify = [
 
 const Public = [
 	{
-		icon: <Login size={24} />,
+		icon: <Login size={20} />,
 		color: 'blue',
 		label: 'Sign Up/Login',
 	},

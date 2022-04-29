@@ -1,129 +1,134 @@
-import React, {
+import {
 	useContext,
 	createContext,
 	PropsWithChildren,
-	useState,
 	useCallback,
-	useEffect,
-	useMemo,
 } from 'react'
-import { NotificationProps } from '@mantine/core'
 import { X, Check } from 'tabler-icons-react'
-import { useInterval } from '@mantine/hooks'
-
-type NotificationSettings = NotificationProps &
-	React.RefAttributes<HTMLDivElement> &
-	Partial<{ isOpen: boolean; text: string; timeout: number }>
+import {
+	NotificationsProvider,
+	showNotification,
+	NotificationProps,
+	updateNotification,
+} from '@mantine/notifications'
+import { v4 } from 'uuid'
 
 const context = createContext<{
-	notification: NotificationSettings
-	setNotification: (props: NotificationSettings) => void
-	setNotificationFailed: (props: NotificationSettings) => void
-	setNotificationSuccess: (props: NotificationSettings) => void
-	setNotificationLoading: (props: NotificationSettings) => void
-	progress: number
+	setNotificationFailed: (
+		props: OmitKeys<NotificationProps, 'message'> & {
+			message?: string
+		}
+	) => void
+	setNotificationSuccess: (
+		props: OmitKeys<NotificationProps, 'message'> & {
+			message?: string
+		}
+	) => void
+	setNotificationStay: (
+		props: OmitKeys<NotificationProps, 'message'> & {
+			message?: string
+		}
+	) => void
+	setNotificationLoading: (
+		props: OmitKeys<NotificationProps, 'message'> & {
+			message?: string
+		}
+	) => () => void
 	// @ts-expect-error
 }>({})
 
-const defaultTimeout = 5000
-
-const step = 50
-
 export const NotificationProvider = (props: PropsWithChildren<{}>) => {
-	const [notification, setNotification] = useState<NotificationSettings>({})
-	const [milliseconds, setMilliseconds] = useState(0)
-	const interval = useInterval(() => setMilliseconds(s => s + step), step)
-
-	useEffect(() => {
-		if (
-			notification.isOpen &&
-			!notification.disallowClose &&
-			notification.timeout !== 0
-		) {
-			interval.start()
-			return () => {
-				interval.stop()
-				setMilliseconds(0)
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [notification.isOpen, notification.disallowClose, notification.timeout]) // ! dont put interval into dependency
-
-	const commonOpenState = useMemo(
-		() => ({
-			isOpen: true,
-			onClose: () => setNotification({}),
-		}),
-		[]
-	)
-	const setNotification_ = useCallback(
-		(props: NotificationSettings) => {
-			setNotification({
-				...commonOpenState,
-				...props,
-			})
-			const { disallowClose, timeout } = props
-			if (!disallowClose && timeout !== 0) {
-				setTimeout(() => {
-					setNotification({})
-				}, timeout || defaultTimeout)
-			}
-		},
-		[commonOpenState]
-	)
-
 	const setNotificationFailed = useCallback(
-		(props: NotificationSettings) => {
-			setNotification_({
+		(
+			props: OmitKeys<NotificationProps, 'message'> & {
+				message?: string
+			}
+		) => {
+			showNotification({
+				title: 'Notification',
+				autoClose: false,
 				color: 'red',
 				icon: <X size={18} />,
-				text: 'Something Went Wrong!',
-				...commonOpenState,
+				message: 'Something Went Wrong!',
 				...props,
 			})
 		},
-		[commonOpenState, setNotification_]
+		[]
 	)
 
 	const setNotificationSuccess = useCallback(
-		(props: NotificationSettings) => {
-			setNotification_({
+		(
+			props: OmitKeys<NotificationProps, 'message'> & {
+				message?: string
+			}
+		) => {
+			showNotification({
+				title: 'Notification',
+				autoClose: 5000,
 				color: 'teal',
 				icon: <Check size={18} />,
-				text: 'Success!',
-				...commonOpenState,
+				message: 'Success!',
 				...props,
 			})
 		},
-		[commonOpenState, setNotification_]
+		[]
 	)
 
 	const setNotificationLoading = useCallback(
-		(props: NotificationSettings) => {
-			setNotification_({
+		(
+			props: OmitKeys<NotificationProps, 'message'> & {
+				message?: string
+			}
+		) => {
+			const id = v4()
+			showNotification({
+				id,
+				title: 'Notification',
+				autoClose: false,
+				message: 'Loading, Please Wait...',
 				loading: true,
-				text: 'Loading, Please Wait...',
-				disallowClose: true,
-				...commonOpenState,
+				...props,
+			})
+
+			return () => {
+				updateNotification({
+					id,
+					autoClose: 0,
+					message: 'Loading, Please Wait...',
+				})
+			}
+		},
+		[]
+	)
+
+	const setNotificationStay = useCallback(
+		(
+			props: OmitKeys<NotificationProps, 'message'> & {
+				message?: string
+			}
+		) => {
+			showNotification({
+				title: 'Notification',
+				autoClose: false,
+				message: 'Hello!',
 				...props,
 			})
 		},
-		[commonOpenState, setNotification_]
+		[]
 	)
 
 	return (
-		<context.Provider
-			value={{
-				notification,
-				setNotification: setNotification_,
-				setNotificationFailed,
-				setNotificationSuccess,
-				setNotificationLoading,
-				progress:
-					(milliseconds / (notification.timeout || defaultTimeout)) * 100,
-			}}
-			{...props}
-		/>
+		<NotificationsProvider position='top-right'>
+			<context.Provider
+				value={{
+					setNotificationFailed,
+					setNotificationSuccess,
+					setNotificationLoading,
+					setNotificationStay,
+				}}
+				{...props}
+			/>
+		</NotificationsProvider>
 	)
 }
 
