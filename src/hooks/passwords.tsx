@@ -77,6 +77,7 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 				return result
 			})
 			.catch(err => {
+				close()
 				setPasswords(passwords) // revert optimistic update
 				setNotificationFailed({
 					message: 'Failed to Update Passwords!',

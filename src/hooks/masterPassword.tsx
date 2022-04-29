@@ -72,6 +72,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				return result
 			})
 			.catch(e => {
+				close()
 				setNotificationFailed({
 					message: 'Update Master Password Failed!',
 				})
@@ -98,6 +99,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				return result
 			})
 			.catch(e => {
+				close()
 				setNotificationFailed({
 					message: 'Something Went Wrong!',
 				})
@@ -134,6 +136,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				return result
 			})
 			.catch(e => {
+				close()
 				setNotificationFailed({
 					message: 'Incorrect Master Password!',
 				})
