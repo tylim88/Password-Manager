@@ -47,10 +47,7 @@ export const ChangeMasterPassword = () => {
 						setLoading(true)
 						setSubmitError(null)
 
-						await changeMasterPassword({
-							oldMasterPassword,
-							newMasterPassword,
-						})
+						await changeMasterPassword(newMasterPassword)
 							.then(() => {
 								form.reset()
 							})

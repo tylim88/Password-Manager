@@ -22,10 +22,7 @@ const context = createContext<{
 	loading: boolean
 	verifyMasterPassword: (inputMasterPassword: string) => Promise<void>
 	setupMasterPassword: (inputMasterPassword: string) => Promise<void>
-	changeMasterPassword: (inputMasterPassword: {
-		oldMasterPassword: string
-		newMasterPassword: string
-	}) => Promise<void>
+	changeMasterPassword: (inputMasterPassword: string) => Promise<void>
 	ref: React.MutableRefObject<(passwords: Secret[]) => void>
 	// @ts-expect-error
 }>({})
@@ -44,17 +41,12 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 	} = useNotification()
 
 	resetCallbackObj['masterPassword'] = () => {
+		setPasswords([])
 		setMasterPassword(null)
 		setLoading(false)
 	}
 
-	const changeMasterPassword = async ({
-		oldMasterPassword,
-		newMasterPassword,
-	}: {
-		oldMasterPassword: string
-		newMasterPassword: string
-	}) => {
+	const changeMasterPassword = async (inputMasterPassword: string) => {
 		if (!user) {
 			// this should never happen
 			throw Error('user not logged in')
@@ -64,10 +56,10 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		})
 		const userDocRef = userFirelordRef.doc(user.uid)
 		const updateData = {
-			masterPasswordHash: await hashMasterPassword(newMasterPassword),
+			masterPasswordHash: await hashMasterPassword(inputMasterPassword),
 			encryptedPasswords: await encryptPasswords(
 				JSON.stringify(passwords),
-				newMasterPassword
+				inputMasterPassword
 			),
 		}
 		await updateDoc(userDocRef, updateData).catch(e => {
@@ -77,7 +69,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			})
 			throw e
 		})
-		setMasterPassword(newMasterPassword)
+		setMasterPassword(inputMasterPassword)
 		setNotificationSuccess({
 			message: 'Successfully Updated Master Password!',
 		})
