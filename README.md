@@ -27,19 +27,17 @@ etc etc
 
 Not only this code demonstrate how to make a password manager, but also how to scale the code and setup project for different environments. The only thing missing is tests.
 
-In practice, you should not commit `functions/.secret/prod.json` file to the repository. This repo is for learning purpose.
-
 Keep in mind if user lost their Master Password, they lose everything. Such mechanic IS A MUST because if you can recover it, it means you can access their site, username and password anytime you want, your user is not safe from you!
-
-Is there any better way to encrypt passwords?
-
-Yes, a better way is client side encryption by using client's device secret. User don't even need to memorize anything. (Not demonstrated here)
 
 You don't really need to hash master password, because if you failed to decrypt, then it basically means the master password is incorrect. It is just more intuitive to verify master password with hash.
 
 Storing master password hash is also useful if you want to stop user from reusing old master password.
 
 Store anything you want as long as you do not use anything you store in database as encryption key, then your users passwords are safe from you.
+
+Is there any even better way to encrypt passwords?
+
+Yes, a better way is client side encryption by using client's device secret. User don't even need to memorize anything. (Not demonstrated here)
 
 Looking for [server side encryption](https://github.com/tylim88/Password-Manager)? (slower, less safe and much more difficult way of doing stuff)
 
@@ -56,10 +54,8 @@ Looking for [server side encryption](https://github.com/tylim88/Password-Manager
 
 To work in dev:
 
-1. Run `npm run f-d-deploy` to deploy functions to dev.
-2. Run `npm run d-start` to start localhost.
+1. Run `npm run d-start` to start localhost.
 
 To go live:
 
-1. Run `npm run f-p-deploy` to deploy functions to prod.
-2. Commit your code, it will deploy hosting to prod.
+1. Commit your code, it will deploy hosting to prod.
