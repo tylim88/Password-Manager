@@ -1,10 +1,14 @@
 # Read Me
 
+![password-manager]('./img1.png')
+
+[demo](https://password-manager-3f905.web.app/)
+
 This is for learning purpose.
 
 In practice, you should not commit functions/.secret/prod.json file to the repository.
 
-quick start:
+## Quick Start
 
 1. `npm run reinstall && npm --prefix functions run reinstall`
 2. change all the `REACT_APP_xxx` configs in `.github` folder to your own configs, you can use same config for both
@@ -24,3 +28,8 @@ To go live:
 
 1. Run `npm run f-p-deploy` to deploy functions to prod.
 2. Commit your code, it will deploy hosting to prod.
+
+## Note
+
+1. The scripts automatically sync `functions/src/schema` to `src/scheme` but NOT vice versa, so you should only make change to `functions/src/schema`.
+2. You can manually sync it by using `npm run copy`.
