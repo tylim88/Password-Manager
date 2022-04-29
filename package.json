@@ -19,6 +19,7 @@
 		"p-start": "env-cmd -f .config/prod.env \"npm start\"",
 		"p-build": "env-cmd -f .config/prod.env \"npm run build\"",
 		"function": "++++++++++++++++++++++++++++function+++++++++++++++++++++++++++++++++++++",
+		"f-reinstall": "npm --prefix functions run reinstall",
 		"f-lint": "npm --prefix functions run lint",
 		"f-build": "npm --prefix functions run build",
 		"f-pretty-quick": "npm --prefix functions run pretty-quick",

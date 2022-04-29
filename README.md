@@ -31,15 +31,22 @@ Not only this code demonstrate how to make a password manager, but also how to s
 
 In practice, you should not commit `functions/.secret/prod.json` file to the repository. This repo is for learning purpose.
 
-Keep in mind if user lost their Master Password, they lose everything. Such mechanic IS A MUST because if you can recover it, it means you can access their site, username and password anytime you want.
+Keep in mind if user lost their Master Password, they lose everything. Such mechanic IS A MUST because if you can recover it, it means you can access their site, username and password anytime you want, your user is not safe from you!
 
+You don't really need to hash master password, because if you failed to decrypt, then it basically means the master password is incorrect. It is just more intuitive to verify master password with hash.
+
+Storing master password hash is also useful if you want to stop user from reusing old master password.
+
+Store anything you want as long as you do not use anything you store in database as encryption key, then your users passwords are safe from you.
 Is there any better way to encrypt passwords?
 
-Yes, a better way is client side encryption by using client's device secret. This keep any secret from reaching server at all. (Not demonstrated here)
+Yes, a better way is to encrypt on client side using only client master password(without mixing with secret from server). This is faster(on client side), safer(no secret send to server) and easier to code(much less validations on server).
+
+[Client side encryption repo](https://github.com/tylim88/Password-Manager/tree/client-side-encrytion)
 
 ## Quick Start
 
-1. `npm run reinstall && npm --prefix functions run reinstall`
+1. `npm run reinstall && npm f-reinstall`
 2. change all the `REACT_APP_xxx` configs in `.github` folder to your own configs, you can use same config for both
 3. backup `.github` folder to other folder.
 4. `firebase init` setup Github Action deploys
