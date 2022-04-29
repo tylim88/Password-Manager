@@ -40,7 +40,13 @@ export const VerifyMasterPassword = () => {
 				})}
 				style={{ minWidth: 300 }}
 			>
-				<Text weight='bold' mb='sm'>
+				<Text
+					weight='bold'
+					mb='sm'
+					sx={theme => ({
+						color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+					})}
+				>
 					Welcome Back, Please Reenter Your Master Password!
 				</Text>
 				<PasswordInput

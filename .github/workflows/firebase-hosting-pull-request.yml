@@ -12,7 +12,8 @@ jobs:
       - run: npm i
       - run: npm i -g firebase-tools
       - run: npm run lint
-      - run: npm run build
+      - run: npm run pretty-quick
+      - run: npm run p-build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

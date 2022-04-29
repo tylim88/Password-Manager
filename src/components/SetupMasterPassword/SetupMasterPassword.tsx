@@ -45,7 +45,13 @@ export const SetupMasterPassword = () => {
 				})}
 				style={{ minWidth: 300 }}
 			>
-				<Text weight='bold' mb='sm'>
+				<Text
+					weight='bold'
+					mb='sm'
+					sx={theme => ({
+						color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+					})}
+				>
 					You Do Not Have MasterPassword Yet, Set Up One!
 				</Text>
 				<PasswordInput

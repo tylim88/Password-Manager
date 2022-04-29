@@ -62,7 +62,13 @@ export const ChangeMasterPassword = () => {
 				)}
 				style={{ minWidth: 300 }}
 			>
-				<Text weight='bold' mb='sm'>
+				<Text
+					weight='bold'
+					mb='sm'
+					sx={theme => ({
+						color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+					})}
+				>
 					Change Your Master Password!
 				</Text>
 				<PasswordInput

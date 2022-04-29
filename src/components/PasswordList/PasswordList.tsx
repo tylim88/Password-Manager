@@ -9,7 +9,16 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { Trash, Edit, GripVertical, Search, X } from 'tabler-icons-react'
+import {
+	Trash,
+	Edit,
+	GripVertical,
+	Search,
+	X,
+	Id,
+	Lock,
+	World,
+} from 'tabler-icons-react'
 import { usePasswords, usePasswordModal, useMasterPassword } from 'hooks'
 import { Text } from '../Text'
 
@@ -45,13 +54,25 @@ export const PasswordList = () => {
 								{filter ? <X size={18} /> : <GripVertical size={18} />}
 							</Grid.Col>
 							<Grid.Col span={6}>
-								<TextInput value={item.site} readOnly />
+								<TextInput
+									value={item.site}
+									readOnly
+									icon={<World size={16} />}
+								/>
 							</Grid.Col>
 							<Grid.Col span={6}>
-								<TextInput value={item.username} readOnly />
+								<TextInput
+									value={item.username}
+									readOnly
+									icon={<Id size={16} />}
+								/>
 							</Grid.Col>
 							<Grid.Col span={6}>
-								<PasswordInput value={item.password} readOnly />
+								<PasswordInput
+									value={item.password}
+									readOnly
+									icon={<Lock size={16} />}
+								/>
 							</Grid.Col>
 							<Grid.Col
 								span={2}
@@ -132,17 +153,38 @@ export const PasswordList = () => {
 					<Grid sx={{ width: '100%' }} columns={24}>
 						<Grid.Col span={2}></Grid.Col>
 						<Grid.Col span={6}>
-							<Text weight={500} size='sm' align='center'>
+							<Text
+								weight={500}
+								size='sm'
+								align='center'
+								sx={theme => ({
+									color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+								})}
+							>
 								Site
 							</Text>
 						</Grid.Col>
 						<Grid.Col span={6}>
-							<Text weight={500} size='sm' sx={{ flex: 1 }} align='center'>
+							<Text
+								weight={500}
+								size='sm'
+								align='center'
+								sx={theme => ({
+									color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+								})}
+							>
 								Username
 							</Text>
 						</Grid.Col>
 						<Grid.Col span={6}>
-							<Text weight={500} size='sm' sx={{ flex: 1 }} align='center'>
+							<Text
+								weight={500}
+								size='sm'
+								align='center'
+								sx={theme => ({
+									color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+								})}
+							>
 								Password
 							</Text>
 						</Grid.Col>
