@@ -15,11 +15,7 @@ type Secret = {
 	password: string
 }
 
-type Passwords = {
+type User = {
 	encryptedPasswords: string | null
 	masterPasswordHash: string
-}
-
-type User = {
-	hasMasterPassword: boolean
 }

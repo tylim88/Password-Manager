@@ -3,6 +3,7 @@ import { z, ZodType, ZodTypeDef } from 'zod'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
+import { MetaTypeCreator, getFirelord } from 'firelordjs'
 
 const config = [
 	'apiKey',
@@ -40,5 +41,9 @@ export const callableCreator = <
 			schema.name.value
 		)(data)
 }
+
+type user = MetaTypeCreator<User, 'Users', string>
+
+export const userFirelordRef = getFirelord<user>()(`Users`)
 
 export type { HttpsCallableResult } from 'firebase/functions'

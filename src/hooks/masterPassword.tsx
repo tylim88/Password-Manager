@@ -7,13 +7,13 @@ import React, {
 } from 'react'
 import { useAuth } from './auth'
 import {
-	verifyMasterPasswordSchema,
-	setMasterPasswordSchema,
-	updateMasterPasswordSchema,
-} from 'schema'
-import { callableCreator, HttpsCallableResult } from 'firebaseHelper'
+	callableCreator,
+	HttpsCallableResult,
+	userFirelordRef,
+} from 'firebaseHelper'
 import { useNotification } from 'hooks'
-
+import { runTransaction } from 'firelordjs'
+import { hashMasterPassword } from './hashingAndEncryption'
 const context = createContext<{
 	masterPassword: string | null
 	setMasterPassword: React.Dispatch<React.SetStateAction<string | null>>
@@ -21,9 +21,7 @@ const context = createContext<{
 	verifyMasterPassword: (
 		inputMasterPassword: string
 	) => Promise<HttpsCallableResult<Secret[]>>
-	setupMasterPassword: (
-		inputMasterPassword: string
-	) => Promise<HttpsCallableResult<null>>
+	setupMasterPassword: (inputMasterPassword: string) => Promise<void>
 	changeMasterPassword: (inputMasterPassword: {
 		oldMasterPassword: string
 		newMasterPassword: string
@@ -36,7 +34,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 	const [masterPassword, setMasterPassword] = useState<string | null>(null)
 	const ref = useRef<(passwords: Secret[]) => void>(() => {})
 	const [loading, setLoading] = useState(false)
-	const { resetCallbackObj } = useAuth()
+	const { resetCallbackObj, user } = useAuth()
 
 	const {
 		setNotificationFailed,
@@ -83,30 +81,36 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 	}
 
 	const setupMasterPassword = async (inputMasterPassword: string) => {
-		const close = setNotificationLoading({
-			message: 'Encrypting Master Password Please Wait...',
-		})
-		const result = await callableCreator(setMasterPasswordSchema)(
-			inputMasterPassword
-		)
-			.then(result => {
-				setMasterPassword(inputMasterPassword)
+		if (user) {
+			const close = setNotificationLoading({
+				message: 'Encrypting Master Password Please Wait...',
+			})
+			const userDocRef = userFirelordRef.doc(user.uid)
+			await runTransaction(async transaction => {
+				// if master password already exist, return error
+				const snapshot = await transaction.get(userDocRef)
+				const data = snapshot.data() as User | undefined
+				if (data) {
+					setNotificationFailed({
+						message: 'Master Password Already Exists',
+					})
+					throw Error('Master Password Already Exists')
+				}
+
+				// else set status to true and set the first master password
+				const setData: User = {
+					masterPasswordHash: await hashMasterPassword(inputMasterPassword),
+					encryptedPasswords: null,
+				}
+
+				await transaction.set(userDocRef, setData)
+
 				setNotificationSuccess({
 					message: 'Successfully Added Master Password!',
 				})
-
-				return result
 			})
-			.catch(e => {
-				close()
-				setNotificationFailed({
-					message: 'Something Went Wrong!',
-				})
-
-				throw e
-			})
-		close()
-		return result
+			close()
+		}
 	}
 
 	const verifyMasterPassword = async (inputMasterPassword: string) => {

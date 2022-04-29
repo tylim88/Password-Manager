@@ -23,7 +23,7 @@ Features:
 15. CI
 16. Structured code
 17. Standardize Firebase function error handling and logging.
-18. Does not log errors in prod environment when processing Master Password to prevent accidentally logging sensitive data. Dev environment log everything.
+18. Client side encryption, does not send any sensitive data to server side.
 
 etc etc
 
