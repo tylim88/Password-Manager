@@ -40,7 +40,7 @@ Storing master password hash is also useful if you want to stop user from reusin
 Store anything you want as long as you do not use anything you store in database as encryption key, then your users passwords are safe from you.
 Is there any better way to encrypt passwords?
 
-Yes, a better way is to encrypt on client side using only client master password(without mixing with secret from server). This is faster(on client side), safer(no secret send to server) and easier to code(much less validations on server).
+Yes, a better way is to encrypt on client side using only client master password(without mixing with secret from server). This is faster(on client side), safer(no secret send to server) and easier to code(much fewer validations on server).
 
 [Client side encryption repo](https://github.com/tylim88/Password-Manager/tree/client-side-encrytion)
 
