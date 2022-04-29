@@ -17,7 +17,7 @@ export const PasswordList = () => {
 	const { passwords, reorder, sort } = usePasswords()
 	const { addPassword, editPassword, deletePassword } = usePasswordModal()
 	const [filter, setFilter] = useState('')
-	const { verifying } = useMasterPassword()
+	const { loading } = useMasterPassword()
 
 	const fields = passwords
 		.filter(item => {
@@ -96,7 +96,7 @@ export const PasswordList = () => {
 
 	return (
 		<Stack
-			sx={{ maxWidth: 750, pointerEvents: verifying ? 'none' : 'auto' }} // disable user interaction while decrypting passwords
+			sx={{ maxWidth: 750, pointerEvents: loading ? 'none' : 'auto' }} // disable user interaction while decrypting passwords
 			mt='xl'
 			mx='auto'
 		>

@@ -3,6 +3,7 @@ import React, {
 	createContext,
 	PropsWithChildren,
 	useState,
+	useRef,
 } from 'react'
 import { useAuth } from './auth'
 import {
@@ -12,16 +13,15 @@ import {
 } from 'schema'
 import { callableCreator, HttpsCallableResult } from 'firebaseHelper'
 import { useNotification } from 'hooks'
-import { v4 } from 'uuid'
 
 const context = createContext<{
 	masterPassword: string | null
 	setMasterPassword: React.Dispatch<React.SetStateAction<string | null>>
-	verifying: string
-	setVerifying: React.Dispatch<React.SetStateAction<string>>
+	loading: boolean
+	setLoading: React.Dispatch<React.SetStateAction<boolean>>
 	verifyMasterPassword: (
 		inputMasterPassword: string
-	) => Promise<HttpsCallableResult<boolean>>
+	) => Promise<HttpsCallableResult<Secret[]>>
 	setupMasterPassword: (
 		inputMasterPassword: string
 	) => Promise<HttpsCallableResult<null>>
@@ -29,13 +29,16 @@ const context = createContext<{
 		oldMasterPassword: string
 		newMasterPassword: string
 	}) => Promise<HttpsCallableResult<null>>
+	ref: React.MutableRefObject<(passwords: Secret[]) => void>
 	// @ts-expect-error
 }>({})
 
 export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 	const [masterPassword, setMasterPassword] = useState<string | null>(null)
-	const [verifying, setVerifying] = useState('')
+	const ref = useRef<(passwords: Secret[]) => void>(() => {})
+	const [loading, setLoading] = useState(false)
 	const { resetCallbackObj } = useAuth()
+
 	const {
 		setNotificationFailed,
 		setNotificationSuccess,
@@ -44,7 +47,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 
 	resetCallbackObj['masterPassword'] = () => {
 		setMasterPassword(null)
-		setVerifying('')
+		setLoading(false)
 	}
 
 	const changeMasterPassword = async ({
@@ -106,12 +109,10 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 	}
 
 	const verifyMasterPassword = async (inputMasterPassword: string) => {
-		const id = v4()
-		setVerifying(id)
-		setNotificationLoading({
-			id,
+		setLoading(true)
+		const close = setNotificationLoading({
 			message: 'Decrypting Passwords Please Wait...',
-		}) // close in password
+		})
 		const result = await callableCreator(verifyMasterPasswordSchema)(
 			inputMasterPassword
 		)
@@ -119,6 +120,10 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				const { data } = result
 				if (data) {
 					setMasterPassword(inputMasterPassword)
+					setNotificationSuccess({
+						message: 'Successfully Decrypted Password!',
+					})
+					ref.current(data)
 					// continue on notification hook
 				} else {
 					// this should not happen, page hook takes care of this
@@ -134,6 +139,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				})
 				throw e
 			})
+		close()
 		return result
 	}
 
@@ -145,8 +151,9 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				verifyMasterPassword,
 				setupMasterPassword,
 				changeMasterPassword,
-				verifying,
-				setVerifying,
+				loading,
+				setLoading,
+				ref,
 			}}
 			{...props}
 		/>

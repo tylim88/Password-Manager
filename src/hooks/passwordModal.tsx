@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { ModalProps } from '@mantine/core'
 import { useAuth } from './auth'
-import { usePasswords } from './password'
+import { usePasswords } from './passwords'
 import { HttpsCallableResult } from 'firebaseHelper'
 import { cloneDeep } from 'lodash'
 

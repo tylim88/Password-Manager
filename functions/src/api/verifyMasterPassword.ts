@@ -2,6 +2,7 @@ import {
 	onCallCreator,
 	passwordsRefCreator,
 	verifyMasterPasswordHash,
+	getPassword,
 } from 'helper'
 import { verifyMasterPasswordSchema } from 'schema'
 
@@ -27,7 +28,7 @@ export const verifyMasterPassword = onCallCreator(
 			masterPassword
 		)
 		if (valid) {
-			return { code: 'ok', data: valid } as const
+			return getPassword(masterPassword, context.auth.uid)
 		}
 		throw Error('Incorrect Master Password')
 	}

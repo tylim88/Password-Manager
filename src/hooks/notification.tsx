@@ -64,7 +64,7 @@ export const NotificationProvider = (props: PropsWithChildren<{}>) => {
 		) => {
 			showNotification({
 				title: 'Notification',
-				autoClose: 5000,
+				autoClose: 3000,
 				color: 'teal',
 				icon: <Check size={18} />,
 				message: 'Success!',

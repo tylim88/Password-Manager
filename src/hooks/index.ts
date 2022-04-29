@@ -1,6 +1,6 @@
 export * from './auth'
 export * from './user'
-export * from './password'
+export * from './passwords'
 export * from './page'
 export * from './masterPassword'
 export * from './notification'

@@ -3,16 +3,15 @@ import {
 	createContext,
 	PropsWithChildren,
 	useCallback,
-	useEffect,
 } from 'react'
 import { callableCreator, HttpsCallableResult } from 'firebaseHelper'
-import { getPasswordsSchema, updatePasswordsSchema } from 'schema'
+import { updatePasswordsSchema } from 'schema'
 import { useAuth } from './auth'
 import { useNotification } from './notification'
 import { useMasterPassword } from './masterPassword'
 import { sortBy, cloneDeep } from 'lodash'
 import { useListState } from '@mantine/hooks'
-import { updateNotification } from '@mantine/notifications'
+
 const context = createContext<{
 	passwords: Secret[]
 	updatePasswords: (
@@ -30,7 +29,7 @@ const context = createContext<{
 
 export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 	const [passwords, handlers] = useListState<Secret>([])
-	const { masterPassword, setVerifying, verifying } = useMasterPassword()
+	const { masterPassword, ref } = useMasterPassword()
 	const {
 		setNotificationFailed,
 		setNotificationSuccess,
@@ -47,6 +46,8 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 		[] // !do not add handler as dependency!!
 	)
 
+	ref.current = setPasswords
+
 	const reorder = ({ from, to }: { from: number; to: number }) => {
 		// does not use the useListState reorder hook because updating via useEffect is problematic
 		const newPasswords = cloneDeep(passwords)
@@ -57,30 +58,6 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 	}
 
 	const sort = () => updatePasswords(sortBy(passwords, ['site', 'username']))
-
-	useEffect(() => {
-		const getPasswords = async () => {
-			masterPassword &&
-				(await callableCreator(getPasswordsSchema)(masterPassword)
-					.then(result => {
-						const data = result.data
-						setPasswords(data)
-						setNotificationSuccess({
-							message: 'Successfully Loaded Passwords!',
-						})
-					})
-					.catch(err => {
-						setNotificationFailed({
-							message: 'Failed To Load Passwords!',
-						})
-					}))
-			setVerifying('')
-			updateNotification({ id: verifying, message: '', autoClose: 0 })
-		}
-		getPasswords()
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [setPasswords, masterPassword, setNotificationFailed, setVerifying]) // ! careful may cause infinite call
 
 	resetCallbackObj['passwords'] = () => setPasswords([])
 
