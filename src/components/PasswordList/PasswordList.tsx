@@ -9,7 +9,7 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { Trash, Edit, GripVertical, Search } from 'tabler-icons-react'
+import { Trash, Edit, GripVertical, Search, X } from 'tabler-icons-react'
 import { usePasswords, usePasswordModal, useMasterPassword } from 'hooks'
 import { Text } from '../Text'
 
@@ -42,7 +42,7 @@ export const PasswordList = () => {
 									display: 'flex',
 								})}
 							>
-								<GripVertical size={18} />
+								{filter ? <X size={18} /> : <GripVertical size={18} />}
 							</Grid.Col>
 							<Grid.Col span={6}>
 								<TextInput value={item.site} readOnly />
