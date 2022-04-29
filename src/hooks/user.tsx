@@ -6,19 +6,11 @@ import {
 	useEffect,
 } from 'react'
 import { useAuth } from './auth'
-import { MetaTypeCreator, getFirelord, onSnapshot } from 'firelordjs'
-import { db } from 'firebaseHelper'
-
-export type User = MetaTypeCreator<
-	{ hasMasterPassword: boolean },
-	'Users',
-	string
->
-
-const userRef = getFirelord<User>(db)('Users')
+import { onSnapshot } from 'firelordjs'
+import { userFirelordRef } from 'firebaseHelper'
 
 const context = createContext<{
-	user: User['read'] | undefined
+	user: User | undefined
 	loading: boolean
 }>({
 	user: undefined,
@@ -26,7 +18,7 @@ const context = createContext<{
 })
 
 export const UserProvider = (props: PropsWithChildren<{}>) => {
-	const [user, setUser] = useState<User['read'] | undefined>(undefined)
+	const [user, setUser] = useState<User | undefined>(undefined)
 	const { user: userFromAuth, resetCallbackObj } = useAuth()
 	const [loading, setLoading] = useState(true)
 
@@ -39,7 +31,7 @@ export const UserProvider = (props: PropsWithChildren<{}>) => {
 	useEffect(() => {
 		if (userUid) {
 			setLoading(true)
-			return onSnapshot(userRef.doc(userUid), snapshot => {
+			return onSnapshot(userFirelordRef.doc(userUid), snapshot => {
 				const data = snapshot.data()
 				setUser(data)
 				setLoading(false)

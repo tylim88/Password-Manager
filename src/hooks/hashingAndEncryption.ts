@@ -1,10 +1,9 @@
-import argon2 from 'argon2-browser'
 import aes from 'crypto-js/aes'
 import CryptoJS from 'crypto-js'
-import { v4 } from 'uuid'
+import bcrypt from 'bcryptjs'
 
 export const hashMasterPassword = (masterPassword: string) =>
-	argon2.hash({ pass: masterPassword, salt: v4() }).then(h => h.encoded)
+	bcrypt.hash(masterPassword, bcrypt.genSaltSync(10))
 
 export const verifyMasterPasswordHash = ({
 	hash,
@@ -12,14 +11,7 @@ export const verifyMasterPasswordHash = ({
 }: {
 	hash: string
 	masterPassword: string
-}) =>
-	argon2
-		.verify({ encoded: hash, pass: masterPassword })
-		.then(() => true)
-		.catch(e => {
-			console.log(e)
-			return false
-		})
+}) => bcrypt.compare(masterPassword, hash)
 
 export const decryptPasswords = (cipherText: string, key: string) =>
 	aes

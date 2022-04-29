@@ -29,20 +29,20 @@ export const PageProvider = (props: PropsWithChildren<{}>) => {
 	useEffect(() => {
 		if (
 			user &&
-			userFromAuth?.hasMasterPassword &&
+			userFromAuth?.masterPasswordHash &&
 			masterPassword &&
 			page !== 'Password List' &&
 			page !== 'Change Master Password'
 		) {
 			setPage('Password List')
-		} else if (user && userFromAuth?.hasMasterPassword && !masterPassword) {
+		} else if (user && userFromAuth?.masterPasswordHash && !masterPassword) {
 			setPage('Verify Master Password')
-		} else if (user && !userFromAuth?.hasMasterPassword) {
+		} else if (user && !userFromAuth?.masterPasswordHash) {
 			setPage('Setup Master Password')
 		} else if (!user) {
 			setPage('Sign Up/Login')
 		}
-	}, [user, userFromAuth?.hasMasterPassword, masterPassword, page])
+	}, [user, userFromAuth?.masterPasswordHash, masterPassword, page])
 
 	return <context.Provider value={{ page, setPage }} {...props} />
 }

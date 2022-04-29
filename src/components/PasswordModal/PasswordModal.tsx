@@ -11,7 +11,6 @@ import { Lock, Id, World } from 'tabler-icons-react'
 import { usePasswordModal } from 'hooks'
 import { useForm } from '@mantine/form'
 import { passwordValidation, zodErrorHandling } from 'schema'
-import { HttpsCallableResult } from 'firebaseHelper'
 
 const Form = ({
 	initialValues,

@@ -7,6 +7,4 @@ module.exports = {
 		'^.+\\.(ts)$': 'ts-jest',
 	},
 	moduleDirectories: ['node_modules', 'src'],
-	collectCoverage: true,
-	collectCoverageFrom: ['**/*.{js,jsx,ts,tsx}', '!**/*.d.ts'],
 }

@@ -110,11 +110,18 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				encryptedPasswords: null,
 			}
 
-			await transaction.set(userDocRef, setData)
+			transaction.set(userDocRef, setData)
 
+			setMasterPassword(inputMasterPassword)
 			setNotificationSuccess({
 				message: 'Successfully Added Master Password!',
 			})
+		}).catch(err => {
+			close()
+			setNotificationFailed({
+				message: err?.message || 'Add Passwords Failed!',
+			})
+			throw err
 		})
 		close()
 	}
@@ -132,6 +139,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 
 		// if master password not exist, return error
 		const passwordsSnapshot = await getDoc(userDocRef).catch(err => {
+			close()
 			setNotificationFailed({
 				message: 'Load Passwords Failed!',
 			})
@@ -148,8 +156,9 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			masterPassword: inputMasterPassword,
 		})
 		if (!valid) {
+			close()
 			setNotificationFailed({
-				message: 'No Master Password!',
+				message: 'Incorrect Master Password!',
 			})
 			throw Error('Incorrect Master Password')
 		}

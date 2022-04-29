@@ -35,9 +35,13 @@ Is there any better way to encrypt passwords?
 
 Yes, a better way is client side encryption by using client's device secret. User don't even need to memorize anything. (Not demonstrated here)
 
-You don't really need to hash master password, because if you failed to decrypt, then it basically means the master password is incorrect. It is just more intuitive to verify master password with hash. As long as you do not use anything you store in database as key, then your users passwords are safe from you.
+You don't really need to hash master password, because if you failed to decrypt, then it basically means the master password is incorrect. It is just more intuitive to verify master password with hash.
 
-Looking for [server side encryption](https://github.com/tylim88/Password-Manager)?
+Storing master password hash is also useful if you want to stop user from reusing old master password.
+
+Store anything you want as long as you do not use anything you store in database as encryption key, then your users passwords are safe from you.
+
+Looking for [server side encryption](https://github.com/tylim88/Password-Manager)? (slower, less safe and much more difficult way of doing stuff)
 
 ## Quick Start
 

@@ -57,13 +57,13 @@ const MainLink = ({ icon, color, label }: MainLinkProps) => {
 }
 
 export const MainLinks = () => {
-	const { user } = useAuth()
-	const { user: userAuth } = useUser()
+	const { user: userAuth } = useAuth()
+	const { user } = useUser()
 	const { masterPassword } = useMasterPassword()
 
 	const links = (
-		user
-			? userAuth?.hasMasterPassword
+		userAuth
+			? user?.masterPasswordHash
 				? masterPassword
 					? Private
 					: Verify
