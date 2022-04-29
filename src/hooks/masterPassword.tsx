@@ -18,7 +18,6 @@ const context = createContext<{
 	masterPassword: string | null
 	setMasterPassword: React.Dispatch<React.SetStateAction<string | null>>
 	loading: boolean
-	setLoading: React.Dispatch<React.SetStateAction<boolean>>
 	verifyMasterPassword: (
 		inputMasterPassword: string
 	) => Promise<HttpsCallableResult<Secret[]>>
@@ -143,6 +142,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				throw e
 			})
 		close()
+		setLoading(false)
 		return result
 	}
 
@@ -155,7 +155,6 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				setupMasterPassword,
 				changeMasterPassword,
 				loading,
-				setLoading,
 				ref,
 			}}
 			{...props}
