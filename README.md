@@ -35,7 +35,7 @@ Keep in mind if user lost their Master Password, they lose everything. Such mech
 
 You don't really need to hash master password, because if you failed to decrypt, then it basically means the master password is incorrect. It is just more intuitive to verify master password with hash.
 
-Storing master password hash is also useful if you want to stop user from reusing old master password(s)s.
+Storing master password hash is also useful if you want to stop user from reusing old master password(s).
 
 Store anything you want as long as you do not use anything you store in database as encryption key, then your users passwords are safe from you.
 Is there any better way to encrypt passwords?
