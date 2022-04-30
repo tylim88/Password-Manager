@@ -11,6 +11,7 @@ import { ThemeIcon, UnstyledButton, Group } from '@mantine/core'
 import { auth } from 'firebaseHelper'
 import { LoadingPage } from '../LoadingPage'
 import { Text } from '../Text'
+import { SignRight } from 'tabler-icons-react'
 
 type MainLinkProps = {
 	icon: React.ReactNode
@@ -19,7 +20,7 @@ type MainLinkProps = {
 }
 
 const MainLink = ({ icon, color, label }: MainLinkProps) => {
-	const { setPage } = usePage()
+	const { page, setPage } = usePage()
 	return (
 		<UnstyledButton
 			sx={theme => ({
@@ -28,7 +29,13 @@ const MainLink = ({ icon, color, label }: MainLinkProps) => {
 				padding: theme.spacing.xs,
 				borderRadius: theme.radius.sm,
 				color:
-					theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+					page === label
+						? theme.colorScheme === 'dark'
+							? '#fff'
+							: '#000'
+						: theme.colorScheme === 'dark'
+						? theme.colors.dark[0]
+						: theme.black,
 
 				'&:hover': {
 					backgroundColor:
@@ -49,8 +56,21 @@ const MainLink = ({ icon, color, label }: MainLinkProps) => {
 				<ThemeIcon color={color} variant='light'>
 					{icon}
 				</ThemeIcon>
-
-				<Text size='sm'>{label}</Text>
+				<Group spacing={'xs'}>
+					<Text
+						size='sm'
+						sx={
+							page === label
+								? theme => ({
+										color: theme.colorScheme === 'dark' ? '#fff' : '#000',
+								  })
+								: []
+						}
+					>
+						{label}
+					</Text>
+					{page === label ? <SignRight size='20' /> : null}
+				</Group>
 			</Group>
 		</UnstyledButton>
 	)
@@ -63,7 +83,7 @@ export const MainLinks = () => {
 
 	const links = (
 		userAuth
-			? user?.hasMasterPassword
+			? user?.masterPasswordHash
 				? masterPassword
 					? Private
 					: Verify
