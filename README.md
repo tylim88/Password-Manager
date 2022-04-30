@@ -1,6 +1,6 @@
 # Client Side Encryption
 
-![password-manager](./img1.png)
+![password-manager](https://raw.githubusercontent.com/tylim88/Password-Manager/main/img1.png)
 
 Features:
 
