@@ -18,6 +18,9 @@ import {
 	Id,
 	Lock,
 	World,
+	Plus,
+	ArrowUp,
+	ArrowDown,
 } from 'tabler-icons-react'
 import { usePasswords, usePasswordModal, useMasterPassword } from 'hooks'
 import { Text } from '../Text'
@@ -133,8 +136,19 @@ export const PasswordList = () => {
 			<Grid mt='md'>
 				<Grid.Col span={6}>
 					<Group>
-						<Button onClick={addPassword}>Add Password</Button>
-						<Button onClick={sort}>Sort Passwords</Button>
+						<Button onClick={addPassword} leftIcon={<Plus size={16} />}>
+							Add
+						</Button>
+						{fields.length > 1 ? (
+							<>
+								<Button onClick={() => sort()}>
+									<ArrowUp size={16} />
+								</Button>
+								<Button onClick={() => sort('des')}>
+									<ArrowDown size={16} />
+								</Button>
+							</>
+						) : null}
 					</Group>
 				</Grid.Col>
 				<Grid.Col span={6} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -192,7 +206,11 @@ export const PasswordList = () => {
 						<Grid.Col span={2}></Grid.Col>
 					</Grid>
 				</Group>
-			) : null}
+			) : (
+				<Text mt='xl' align='center'>
+					You don't have any password yet. Click the button to add.
+				</Text>
+			)}
 
 			<DragDropContext
 				onDragEnd={({ destination, source }) => {
