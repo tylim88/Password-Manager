@@ -24,7 +24,6 @@ const throwAndLogHttpsError = ({
 		code,
 		message,
 		details: toLogDetails || ENV.dev ? details : undefined,
-		logType,
 	})
 	throw new functions.https.HttpsError(code, message)
 }
