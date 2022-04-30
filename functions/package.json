@@ -6,7 +6,7 @@
 		"lint": "eslint --ext .ts . --fix",
 		"test": "rm -rf coverage && firebase emulators:exec \"jest --forceExit\"",
 		"tsc": "tsc",
-		"build": "rm -rf lib && babel src --out-dir lib --extensions \".ts\"",
+		"build": "npm i && rm -rf lib && babel src --out-dir lib --extensions \".ts\"",
 		"serve": "npm run build && firebase emulators:start --only functions",
 		"shell": "npm run build && firebase functions:shell",
 		"start": "npm run shell",

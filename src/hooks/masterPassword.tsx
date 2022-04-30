@@ -65,6 +65,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		})
 			.then(result => {
 				setMasterPassword(newMasterPassword)
+				close()
 				setNotificationSuccess({
 					message: 'Successfully Updated Master Password!',
 				})
@@ -78,7 +79,6 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				throw e
 			})
 
-		close()
 		return result
 	}
 
@@ -91,6 +91,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		)
 			.then(result => {
 				setMasterPassword(inputMasterPassword)
+				close()
 				setNotificationSuccess({
 					message: 'Successfully Added Master Password!',
 				})
@@ -105,7 +106,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 
 				throw e
 			})
-		close()
+
 		return result
 	}
 
@@ -121,6 +122,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				const { data } = result
 				if (data) {
 					setMasterPassword(inputMasterPassword)
+					close()
 					setNotificationSuccess({
 						message: 'Successfully Decrypted Password!',
 					})
@@ -128,6 +130,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 					// continue on notification hook
 				} else {
 					// this should not happen, page hook takes care of this
+					close()
 					setNotificationFailed({
 						message: 'No Master Password!',
 					})
@@ -141,7 +144,6 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 				})
 				throw e
 			})
-		close()
 		setLoading(false)
 		return result
 	}

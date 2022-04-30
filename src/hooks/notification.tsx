@@ -46,7 +46,7 @@ export const NotificationProvider = (props: PropsWithChildren<{}>) => {
 		) => {
 			showNotification({
 				title: 'Notification',
-				autoClose: false,
+				autoClose: 10000,
 				color: 'red',
 				icon: <X size={18} />,
 				message: 'Something Went Wrong!',
@@ -116,7 +116,6 @@ export const NotificationProvider = (props: PropsWithChildren<{}>) => {
 		},
 		[]
 	)
-
 	return (
 		<NotificationsProvider position='top-right'>
 			<context.Provider
