@@ -70,10 +70,10 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			throw e
 		})
 		setMasterPassword(inputMasterPassword)
+		close()
 		setNotificationSuccess({
 			message: 'Successfully Updated Master Password!',
 		})
-		close()
 	}
 
 	const setupMasterPassword = async (inputMasterPassword: string) => {
@@ -90,9 +90,6 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			const snapshot = await transaction.get(userDocRef)
 			const data = snapshot.data() as User | undefined
 			if (data) {
-				setNotificationFailed({
-					message: 'Master Password Already Exists',
-				})
 				throw Error('Master Password Already Exists')
 			}
 
@@ -105,6 +102,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			transaction.set(userDocRef, setData)
 
 			setMasterPassword(inputMasterPassword)
+			close()
 			setNotificationSuccess({
 				message: 'Successfully Added Master Password!',
 			})
@@ -115,7 +113,6 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			})
 			throw err
 		})
-		close()
 	}
 
 	const verifyMasterPassword = async (inputMasterPassword: string) => {
@@ -125,13 +122,9 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		}
 		setLoading(true)
 		const userDocRef = userFirelordRef.doc(user.uid)
-		const close = setNotificationLoading({
-			message: 'Decrypting Passwords Please Wait...',
-		})
 
 		// if master password not exist, return error
 		const passwordsSnapshot = await getDoc(userDocRef).catch(err => {
-			close()
 			setNotificationFailed({
 				message: 'Load Passwords Failed!',
 			})
@@ -148,7 +141,6 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			masterPassword: inputMasterPassword,
 		})
 		if (!valid) {
-			close()
 			setNotificationFailed({
 				message: 'Incorrect Master Password!',
 			})
@@ -164,10 +156,10 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			ref.current(parsed)
 		}
 		setMasterPassword(inputMasterPassword)
+
 		setNotificationSuccess({
 			message: 'Successfully Decrypted Password!',
 		})
-		close()
 		setLoading(false)
 	}
 

@@ -131,7 +131,7 @@ export const PasswordList = () => {
 					color: theme.colorScheme === 'dark' ? '#fff' : '#000',
 				})}
 			>
-				Passwords List
+				Password List
 			</Text>
 			<Grid mt='md'>
 				<Grid.Col span={6}>
