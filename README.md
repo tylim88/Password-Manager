@@ -42,7 +42,7 @@ Is there any better way to encrypt passwords?
 
 Yes, a better way is to encrypt on client side using only client master password(without mixing with secret from server). This is faster(on client side), safer(no secret send to server) and easier to code(much fewer validations on server).
 
-[Client side encryption repo](https://github.com/tylim88/Password-Manager/tree/client-side-encrytion).**IMPORTANT: do not use the same Firebase config for both client side encryption and server side encryption, their database model is different!**
+[Client side encryption repo](https://github.com/tylim88/Password-Manager/tree/client).**IMPORTANT: do not use the same Firebase config for both client side encryption and server side encryption, their database model is different!**
 
 ## Quick Start
 
