@@ -39,7 +39,7 @@ Is there any even better way to encrypt passwords?
 
 Yes, a better way is client side encryption by using client's device secret. User don't even need to memorize anything. (Not demonstrated here)
 
-Looking for [server side encryption](https://github.com/tylim88/Password-Manager)? (slower, less safe and much more difficult way of doing stuff)
+Looking for [server side encryption](https://github.com/tylim88/Password-Manager)? (slower, less safe and much more difficult way of doing stuff). **IMPORTANT: do not use the same Firebase config for both client side encryption and server side encryption, their database model is different!**
 
 ## Quick Start
 

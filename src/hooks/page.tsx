@@ -24,25 +24,26 @@ const context = createContext<{
 export const PageProvider = (props: PropsWithChildren<{}>) => {
 	const [page, setPage] = useState<Page>('Sign Up/Login')
 	const { masterPassword } = useMasterPassword()
-	const { user } = useAuth()
-	const { user: userFromAuth } = useUser()
+	const { user: userFromAuth } = useAuth()
+	const { user } = useUser()
+
 	useEffect(() => {
 		if (
-			user &&
-			userFromAuth?.masterPasswordHash &&
+			userFromAuth &&
+			user?.masterPasswordHash &&
 			masterPassword &&
 			page !== 'Password List' &&
 			page !== 'Change Master Password'
 		) {
 			setPage('Password List')
-		} else if (user && userFromAuth?.masterPasswordHash && !masterPassword) {
+		} else if (userFromAuth && user?.masterPasswordHash && !masterPassword) {
 			setPage('Verify Master Password')
-		} else if (user && !userFromAuth?.masterPasswordHash) {
+		} else if (userFromAuth && !user?.masterPasswordHash) {
 			setPage('Setup Master Password')
-		} else if (!user) {
+		} else if (!userFromAuth) {
 			setPage('Sign Up/Login')
 		}
-	}, [user, userFromAuth?.masterPasswordHash, masterPassword, page])
+	}, [userFromAuth, user?.masterPasswordHash, masterPassword, page])
 
 	return <context.Provider value={{ page, setPage }} {...props} />
 }
