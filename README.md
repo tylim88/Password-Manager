@@ -2,7 +2,7 @@
 
 ![password-manager](https://raw.githubusercontent.com/tylim88/Password-Manager/main/img1.png)
 
-**[Demo](https://password-manager-3f905.web.app/)**
+https://password-manager-3f905.web.app/
 
 Features:
 
