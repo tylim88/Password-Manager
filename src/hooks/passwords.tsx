@@ -23,7 +23,7 @@ const context = createContext<{
 		}[]
 	) => Promise<void>
 	reorder: (indexes: { from: number; to: number }) => void
-	sort: () => void
+	sort: (order?: 'asc' | 'des') => void
 
 	// @ts-expect-error
 }>({ passwords: [] })
@@ -60,7 +60,13 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 		updatePasswords([...head, ...target, ...tail])
 	}
 
-	const sort = () => updatePasswords(sortBy(passwords, ['site', 'username']))
+	const sort = (order?: 'asc' | 'des') => {
+		const sorted = sortBy(passwords, ['site', 'username'])
+		if (order === 'des') {
+			sorted.reverse()
+		}
+		updatePasswords(sorted)
+	}
 
 	resetCallbackObj['passwords'] = () => setPasswords([])
 
