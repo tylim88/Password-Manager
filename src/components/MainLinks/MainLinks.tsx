@@ -83,7 +83,7 @@ export const MainLinks = () => {
 
 	const links = (
 		userAuth
-			? user?.masterPasswordHash
+			? user?.hasMasterPassword
 				? masterPassword
 					? Private
 					: Verify
