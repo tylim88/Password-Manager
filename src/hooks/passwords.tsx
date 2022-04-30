@@ -49,6 +49,8 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 	ref.current = setPasswords
 
 	const reorder = ({ from, to }: { from: number; to: number }) => {
+		if (from === to) return
+
 		// does not use the useListState reorder hook because updating via useEffect is problematic
 		const newPasswords = cloneDeep(passwords)
 		const target = newPasswords.splice(from, 1)

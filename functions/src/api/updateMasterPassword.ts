@@ -52,7 +52,6 @@ export const updateMasterPassword = onCallCreator(
 			}
 
 			// if hash is valid, re-encrypt passwords if passwords exist
-
 			const setData: Passwords = {
 				masterPasswordHash: await hashMasterPassword(newMasterPassword),
 				encryptedPasswords: encryptedPasswords
