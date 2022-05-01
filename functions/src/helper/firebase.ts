@@ -35,8 +35,7 @@ export const onCallCreator = <
 		res: ZodType<unknown, ZodTypeDef, unknown>
 		name: z.ZodLiteral<string>
 	},
-	Q extends z.infer<T['res']>,
-	R extends { ok: functions.https.FunctionsErrorCode }
+	Q extends z.infer<T['res']>
 >(
 	schema: T,
 	config: { route: 'private' | 'public'; toLogDetails: boolean },
@@ -44,19 +43,11 @@ export const onCallCreator = <
 		reqData: z.infer<T['req']>,
 		context: NonNullableKey<functions.https.CallableContext, 'auth'>
 	) => Promise<
-		R extends { code: 'ok' }
-			? R & {
-					data: keyof Q extends keyof z.infer<T['res']> ? Q : never
-			  }
-			:
-					| OmitKeys<
-							Parameters<typeof throwAndLogHttpsError>[0],
-							'toLogDetails'
-					  >
-					| {
-							code: 'ok'
-							data: keyof Q extends keyof z.infer<T['res']> ? Q : never // ensure exact object shape
-					  }
+		| OmitKeys<Parameters<typeof throwAndLogHttpsError>[0], 'toLogDetails'>
+		| {
+				code: 'ok'
+				data: keyof Q extends keyof z.infer<T['res']> ? Q : never
+		  }
 	>
 ) => {
 	const { route, toLogDetails } = config
