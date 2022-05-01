@@ -12,7 +12,7 @@ const throwAndLogHttpsError = ({
 	message,
 	details,
 	logType,
-	toLogDetails, // do not log detail when processing sensitive data, because those data may end up in the log file
+	toLogDetails, // option to not log detail when processing sensitive data, because those data may end up in the log file
 }: {
 	code: ExcludeUnion<functions.https.FunctionsErrorCode, 'ok'>
 	message: string
