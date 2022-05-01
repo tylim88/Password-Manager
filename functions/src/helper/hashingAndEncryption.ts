@@ -14,9 +14,7 @@ export const verifyMasterPasswordHash = (hash: string, plain: string) =>
 	})
 
 export const decryptPasswords = (cipherText: string, key: string) =>
-	aes
-		.decrypt(cipherText, key + ENV.aes_secret) // secret is optional
-		.toString(CryptoJS.enc.Utf8)
+	aes.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8) // aes output is different every time with same input, it doesn't need any extra secret key.
 
 export const encryptPasswords = (plain: string, key: string) =>
-	aes.encrypt(plain, key + ENV.aes_secret).toString()
+	aes.encrypt(plain, key).toString()
