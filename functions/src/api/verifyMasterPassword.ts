@@ -1,14 +1,14 @@
 import {
-	onCallCreator,
 	passwordsRefCreator,
 	verifyMasterPasswordHash,
 	getPassword,
 } from 'helper'
 import { verifyMasterPasswordSchema } from 'schema'
+import { onCall } from 'firecall'
 
-export const verifyMasterPassword = onCallCreator(
+export const verifyMasterPassword = onCall(
 	verifyMasterPasswordSchema,
-	{ route: 'private', toLogDetails: false },
+	{ route: 'private', onLogging: false },
 	async (masterPassword, context) => {
 		const passwordsRef = passwordsRefCreator(context.auth.uid)
 

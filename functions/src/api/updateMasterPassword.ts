@@ -1,5 +1,4 @@
 import {
-	onCallCreator,
 	db,
 	passwordsRefCreator,
 	hashMasterPassword,
@@ -8,10 +7,11 @@ import {
 	decryptPasswords,
 } from 'helper'
 import { updateMasterPasswordSchema } from 'schema'
+import { onCall } from 'firecall'
 
-export const updateMasterPassword = onCallCreator(
+export const updateMasterPassword = onCall(
 	updateMasterPasswordSchema,
-	{ route: 'private', toLogDetails: false },
+	{ route: 'private', onLogging: false },
 	async ({ newMasterPassword, oldMasterPassword }, context) => {
 		return await db.runTransaction(async transaction => {
 			const passwordsRef = passwordsRefCreator(context.auth.uid)

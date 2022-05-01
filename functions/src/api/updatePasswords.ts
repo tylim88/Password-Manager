@@ -1,5 +1,4 @@
 import {
-	onCallCreator,
 	db,
 	passwordsRefCreator,
 	verifyMasterPasswordHash,
@@ -7,10 +6,11 @@ import {
 } from 'helper'
 import { updatePasswordsSchema } from 'schema'
 import { sortBy } from 'lodash'
+import { onCall } from 'firecall'
 
-export const updatePasswords = onCallCreator(
+export const updatePasswords = onCall(
 	updatePasswordsSchema,
-	{ route: 'private', toLogDetails: false },
+	{ route: 'private', onLogging: false },
 	async ({ masterPassword, newPasswords }, context) => {
 		return await db.runTransaction(async transaction => {
 			const passwordsRef = passwordsRefCreator(context.auth.uid)

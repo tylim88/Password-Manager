@@ -1,15 +1,18 @@
 import {
-	onCallCreator,
 	db,
 	hashMasterPassword,
 	userRefCreator,
 	passwordsRefCreator,
 } from 'helper'
 import { setMasterPasswordSchema } from 'schema'
+import { onCall } from 'firecall'
 
-export const setMasterPassword = onCallCreator(
+export const setMasterPassword = onCall(
 	setMasterPasswordSchema,
-	{ route: 'private', toLogDetails: false },
+	{
+		route: 'private',
+		onLogging: false,
+	},
 	async (masterPassword, context) => {
 		return await db.runTransaction(async transaction => {
 			const userRef = userRefCreator(context.auth.uid)
