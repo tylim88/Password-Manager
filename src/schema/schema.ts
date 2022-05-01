@@ -45,10 +45,3 @@ export const verifyMasterPasswordSchema = {
 	res: passwords,
 	name: z.literal('verifyMasterPassword'),
 }
-
-export const allSchema = [
-	setMasterPasswordSchema,
-	updateMasterPasswordSchema,
-	updatePasswordsSchema,
-	verifyMasterPasswordSchema,
-]
