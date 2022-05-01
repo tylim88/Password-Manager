@@ -25,6 +25,7 @@ const throwAndLogHttpsError = ({
 		message,
 		details: toLogDetails || ENV.dev ? details : undefined,
 	})
+	// you can save the log file here if you want to
 	throw new functions.https.HttpsError(code, message)
 }
 // standardize the way of data validation, auth checking and error handling
