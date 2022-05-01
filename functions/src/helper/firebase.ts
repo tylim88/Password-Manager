@@ -35,7 +35,8 @@ export const onCallCreator = <
 		res: ZodType<unknown, ZodTypeDef, unknown>
 		name: z.ZodLiteral<string>
 	},
-	Q extends z.infer<T['res']>
+	Q extends z.infer<T['res']>,
+	R extends { ok: functions.https.FunctionsErrorCode }
 >(
 	schema: T,
 	config: { route: 'private' | 'public'; toLogDetails: boolean },
