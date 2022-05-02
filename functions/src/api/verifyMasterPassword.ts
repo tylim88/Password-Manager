@@ -8,7 +8,7 @@ import { onCall } from 'firecall'
 
 export const verifyMasterPassword = onCall(
 	verifyMasterPasswordSchema,
-	{ route: 'private', onLogging: false },
+	{ route: 'private', onErrorLogging: false },
 	async (masterPassword, context) => {
 		const passwordsRef = passwordsRefCreator(context.auth.uid)
 

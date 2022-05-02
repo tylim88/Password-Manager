@@ -11,7 +11,7 @@ export const setMasterPassword = onCall(
 	setMasterPasswordSchema,
 	{
 		route: 'private',
-		onLogging: false,
+		onErrorLogging: false,
 	},
 	async (masterPassword, context) => {
 		return await db.runTransaction(async transaction => {
