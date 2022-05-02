@@ -14,8 +14,8 @@ const passwords = z.array(
 
 export const setMasterPasswordSchema = {
 	req: masterPassword,
-	res: z.literal(null),
-	name: z.literal('setMasterPassword'),
+	res: z.null(),
+	name: 'setMasterPassword',
 }
 
 export const updateMasterPasswordSchema = {
@@ -25,8 +25,8 @@ export const updateMasterPasswordSchema = {
 			newMasterPassword: masterPassword,
 		})
 		.strict(),
-	res: z.literal(null),
-	name: z.literal('updateMasterPassword'),
+	res: z.null(),
+	name: 'updateMasterPassword',
 }
 
 export const updatePasswordsSchema = {
@@ -36,12 +36,12 @@ export const updatePasswordsSchema = {
 			newPasswords: passwords,
 		})
 		.strict(),
-	res: z.literal(null),
-	name: z.literal('updatePasswords'),
+	res: z.null(),
+	name: 'updatePasswords',
 }
 
 export const verifyMasterPasswordSchema = {
 	req: masterPassword,
 	res: passwords,
-	name: z.literal('verifyMasterPassword'),
+	name: 'verifyMasterPassword',
 }

@@ -29,7 +29,7 @@ export const callableCreator = <
 	T extends {
 		req: ZodType<unknown, ZodTypeDef, unknown>
 		res: ZodType<unknown, ZodTypeDef, unknown>
-		name: z.ZodLiteral<string>
+		name: string
 	}
 >(
 	schema: T
@@ -37,7 +37,7 @@ export const callableCreator = <
 	return (data: z.infer<T['req']>) =>
 		httpsCallable<z.infer<T['req']>, z.infer<T['res']>>(
 			funRef,
-			schema.name.value
+			schema.name
 		)(data)
 }
 
