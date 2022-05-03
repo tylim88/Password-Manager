@@ -11,7 +11,7 @@ import {
 	setMasterPasswordSchema,
 	updateMasterPasswordSchema,
 } from 'schema'
-import { callableCreator, HttpsCallableResult } from 'firebaseHelper'
+import { callable, HttpsCallableResult } from 'firebaseHelper'
 import { useNotification } from 'hooks'
 
 const context = createContext<{
@@ -59,7 +59,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		const close = setNotificationLoading({
 			message: 'Updating Master Password Please Wait...',
 		})
-		const result = await callableCreator(updateMasterPasswordSchema)({
+		const result = await callable(updateMasterPasswordSchema)({
 			oldMasterPassword,
 			newMasterPassword,
 		})
@@ -86,9 +86,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		const close = setNotificationLoading({
 			message: 'Encrypting Master Password Please Wait...',
 		})
-		const result = await callableCreator(setMasterPasswordSchema)(
-			inputMasterPassword
-		)
+		const result = await callable(setMasterPasswordSchema)(inputMasterPassword)
 			.then(result => {
 				setMasterPassword(inputMasterPassword)
 				close()
@@ -115,7 +113,7 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		const close = setNotificationLoading({
 			message: 'Decrypting Passwords Please Wait...',
 		})
-		const result = await callableCreator(verifyMasterPasswordSchema)(
+		const result = await callable(verifyMasterPasswordSchema)(
 			inputMasterPassword
 		)
 			.then(result => {

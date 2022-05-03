@@ -4,7 +4,7 @@ import {
 	PropsWithChildren,
 	useCallback,
 } from 'react'
-import { callableCreator, HttpsCallableResult } from 'firebaseHelper'
+import { callable, HttpsCallableResult } from 'firebaseHelper'
 import { updatePasswordsSchema } from 'schema'
 import { useAuth } from './auth'
 import { useNotification } from './notification'
@@ -76,7 +76,7 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 		}
 		const close = setNotificationLoading({ message: 'Updating Passwords...' })
 		setPasswords(newPasswords) // optimistic update
-		const result = await callableCreator(updatePasswordsSchema)({
+		const result = await callable(updatePasswordsSchema)({
 			masterPassword,
 			newPasswords,
 		})

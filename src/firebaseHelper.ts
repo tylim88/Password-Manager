@@ -3,7 +3,7 @@ import { z, ZodType, ZodTypeDef } from 'zod'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
-
+import { callableCreator } from 'firecaller'
 const config = [
 	'apiKey',
 	'authDomain',
@@ -25,20 +25,6 @@ export const auth = getAuth()
 
 export const funRef = getFunctions(app)
 
-export const callableCreator = <
-	T extends {
-		req: ZodType<unknown, ZodTypeDef, unknown>
-		res: ZodType<unknown, ZodTypeDef, unknown>
-		name: string
-	}
->(
-	schema: T
-) => {
-	return (data: z.infer<T['req']>) =>
-		httpsCallable<z.infer<T['req']>, z.infer<T['res']>>(
-			funRef,
-			schema.name
-		)(data)
-}
+export const callable = callableCreator()
 
 export type { HttpsCallableResult } from 'firebase/functions'
