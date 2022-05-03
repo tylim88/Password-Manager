@@ -1,5 +1,4 @@
-import { getFunctions, httpsCallable } from 'firebase/functions'
-import { z, ZodType, ZodTypeDef } from 'zod'
+import { getFunctions } from 'firebase/functions'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
