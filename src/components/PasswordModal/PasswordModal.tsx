@@ -11,7 +11,6 @@ import { Lock, Id, World } from 'tabler-icons-react'
 import { usePasswordModal } from 'hooks'
 import { useForm } from '@mantine/form'
 import { updatePasswordsSchema, zodErrorHandling } from 'schema'
-import { HttpsCallableResult } from 'firebaseHelper'
 
 const Form = ({
 	initialValues,
@@ -19,7 +18,13 @@ const Form = ({
 	validate,
 }: {
 	initialValues: Secret
-	onRequest: (value: Secret) => Promise<HttpsCallableResult<null>>
+	onRequest: (value: Secret) => Promise<
+		| {
+				code: 'ok'
+				data: null
+		  }
+		| undefined
+	>
 	validate: (values: { site: string; username: string }) => string | null
 }) => {
 	const [loading, setLoading] = useState(false)

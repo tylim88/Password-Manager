@@ -10,7 +10,7 @@ import { onCall } from 'firecall'
 
 export const updatePasswords = onCall(
 	updatePasswordsSchema,
-	{ route: 'private', onErrorLogging: false },
+	{ route: 'private' },
 	async ({ masterPassword, newPasswords }, context) => {
 		return await db.runTransaction(async transaction => {
 			const passwordsRef = passwordsRefCreator(context.auth.uid)

@@ -54,7 +54,7 @@
 		"@mantine/hooks": "^4.1.5",
 		"@mantine/notifications": "^4.2.1",
 		"firebase": "^9.6.11",
-		"firecaller": "^0.0.2",
+		"firecaller": "^0.1.1",
 		"firelordjs": "^1.1.16",
 		"lodash": "^4.17.21",
 		"react": "^17.0.2",

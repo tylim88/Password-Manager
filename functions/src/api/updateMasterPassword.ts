@@ -11,7 +11,7 @@ import { onCall } from 'firecall'
 
 export const updateMasterPassword = onCall(
 	updateMasterPasswordSchema,
-	{ route: 'private', onErrorLogging: false },
+	{ route: 'private' },
 	async ({ newMasterPassword, oldMasterPassword }, context) => {
 		return await db.runTransaction(async transaction => {
 			const passwordsRef = passwordsRefCreator(context.auth.uid)

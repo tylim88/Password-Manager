@@ -11,23 +11,41 @@ import {
 	setMasterPasswordSchema,
 	updateMasterPasswordSchema,
 } from 'schema'
-import { callable, HttpsCallableResult } from 'firebaseHelper'
+import { callable } from 'firebaseHelper'
 import { useNotification } from 'hooks'
 
 const context = createContext<{
 	masterPassword: string | null
 	setMasterPassword: React.Dispatch<React.SetStateAction<string | null>>
 	loading: boolean
-	verifyMasterPassword: (
-		inputMasterPassword: string
-	) => Promise<HttpsCallableResult<Secret[]>>
-	setupMasterPassword: (
-		inputMasterPassword: string
-	) => Promise<HttpsCallableResult<null>>
+	verifyMasterPassword: (inputMasterPassword: string) => Promise<
+		| {
+				code: 'ok'
+				data: {
+					password: string
+					username: string
+					site: string
+				}[]
+		  }
+		| undefined
+	>
+	setupMasterPassword: (inputMasterPassword: string) => Promise<
+		| {
+				code: 'ok'
+				data: null
+		  }
+		| undefined
+	>
 	changeMasterPassword: (inputMasterPassword: {
 		oldMasterPassword: string
 		newMasterPassword: string
-	}) => Promise<HttpsCallableResult<null>>
+	}) => Promise<
+		| {
+				code: 'ok'
+				data: null
+		  }
+		| undefined
+	>
 	ref: React.MutableRefObject<(passwords: Secret[]) => void>
 	// @ts-expect-error
 }>({})
@@ -64,12 +82,14 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			newMasterPassword,
 		})
 			.then(result => {
-				setMasterPassword(newMasterPassword)
-				close()
-				setNotificationSuccess({
-					message: 'Successfully Updated Master Password!',
-				})
-				return result
+				if (result.code === 'ok') {
+					setMasterPassword(newMasterPassword)
+					close()
+					setNotificationSuccess({
+						message: 'Successfully Updated Master Password!',
+					})
+					return result
+				}
 			})
 			.catch(e => {
 				close()
@@ -88,13 +108,15 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		})
 		const result = await callable(setMasterPasswordSchema)(inputMasterPassword)
 			.then(result => {
-				setMasterPassword(inputMasterPassword)
-				close()
-				setNotificationSuccess({
-					message: 'Successfully Added Master Password!',
-				})
+				if (result.code === 'ok') {
+					setMasterPassword(inputMasterPassword)
+					close()
+					setNotificationSuccess({
+						message: 'Successfully Added Master Password!',
+					})
 
-				return result
+					return result
+				}
 			})
 			.catch(e => {
 				close()
@@ -117,23 +139,26 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 			inputMasterPassword
 		)
 			.then(result => {
-				const { data } = result
-				if (data) {
-					setMasterPassword(inputMasterPassword)
-					close()
-					setNotificationSuccess({
-						message: 'Successfully Decrypted Password!',
-					})
-					ref.current(data)
-					// continue on notification hook
-				} else {
-					// this should not happen, page hook takes care of this
-					close()
-					setNotificationFailed({
-						message: 'No Master Password!',
-					})
+				const { code } = result
+				if (code === 'ok') {
+					const { data } = result
+					if (data) {
+						setMasterPassword(inputMasterPassword)
+						close()
+						setNotificationSuccess({
+							message: 'Successfully Decrypted Password!',
+						})
+						ref.current(data)
+						// continue on notification hook
+					} else {
+						// this should not happen, page hook takes care of this
+						close()
+						setNotificationFailed({
+							message: 'No Master Password!',
+						})
+					}
+					return result
 				}
-				return result
 			})
 			.catch(e => {
 				close()

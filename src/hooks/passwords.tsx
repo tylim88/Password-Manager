@@ -4,7 +4,7 @@ import {
 	PropsWithChildren,
 	useCallback,
 } from 'react'
-import { callable, HttpsCallableResult } from 'firebaseHelper'
+import { callable } from 'firebaseHelper'
 import { updatePasswordsSchema } from 'schema'
 import { useAuth } from './auth'
 import { useNotification } from './notification'
@@ -20,7 +20,14 @@ const context = createContext<{
 			username: string
 			site: string
 		}[]
-	) => Promise<HttpsCallableResult<null>>
+	) => Promise<
+		| {
+				code: 'ok'
+				data: null
+		  }
+		| undefined
+	>
+
 	reorder: (indexes: { from: number; to: number }) => void
 	sort: (order?: 'asc' | 'des') => void
 
@@ -81,8 +88,10 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 			newPasswords,
 		})
 			.then(result => {
-				setNotificationSuccess({ message: 'Successfully Updated Passwords!' })
-				return result
+				if (result.code === 'ok') {
+					setNotificationSuccess({ message: 'Successfully Updated Passwords!' })
+					return result
+				}
 			})
 			.catch(err => {
 				close()
