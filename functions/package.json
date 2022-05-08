@@ -31,7 +31,7 @@
 		"crypto-js": "^4.1.1",
 		"firebase-admin": "^10.0.2",
 		"firebase-functions": "^3.18.0",
-		"firecall": "^0.2.1",
+		"firecall": "^0.3.0",
 		"functions": "file:",
 		"lodash": "^4.17.21",
 		"regenerator-runtime": "^0.13.9",
