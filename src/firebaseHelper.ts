@@ -2,7 +2,6 @@ import { getFunctions } from 'firebase/functions'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
-import { callableCreator } from 'firecaller'
 const config = [
 	'apiKey',
 	'authDomain',
@@ -24,6 +23,6 @@ export const auth = getAuth()
 
 export const funRef = getFunctions(app)
 
-export const callable = callableCreator()
+export { callable } from 'firecaller'
 
 export type { HttpsCallableResult } from 'firebase/functions'
