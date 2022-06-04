@@ -80,24 +80,22 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		const result = await callable(updateMasterPasswordSchema)({
 			oldMasterPassword,
 			newMasterPassword,
-		})
-			.then(result => {
-				if (result.code === 'ok') {
-					setMasterPassword(newMasterPassword)
-					close()
-					setNotificationSuccess({
-						message: 'Successfully Updated Master Password!',
-					})
-					return result
-				}
-			})
-			.catch(e => {
+		}).then(result => {
+			if (result.code === 'ok') {
+				setMasterPassword(newMasterPassword)
+				close()
+				setNotificationSuccess({
+					message: 'Successfully Updated Master Password!',
+				})
+				return result
+			} else {
 				close()
 				setNotificationFailed({
 					message: 'Update Master Password Failed!',
 				})
-				throw e
-			})
+				throw Error('Update Master Password Failed!')
+			}
+		})
 
 		return result
 	}
@@ -106,26 +104,26 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		const close = setNotificationLoading({
 			message: 'Encrypting Master Password Please Wait...',
 		})
-		const result = await callable(setMasterPasswordSchema)(inputMasterPassword)
-			.then(result => {
-				if (result.code === 'ok') {
-					setMasterPassword(inputMasterPassword)
-					close()
-					setNotificationSuccess({
-						message: 'Successfully Added Master Password!',
-					})
+		const result = await callable(setMasterPasswordSchema)(
+			inputMasterPassword
+		).then(result => {
+			if (result.code === 'ok') {
+				setMasterPassword(inputMasterPassword)
+				close()
+				setNotificationSuccess({
+					message: 'Successfully Added Master Password!',
+				})
 
-					return result
-				}
-			})
-			.catch(e => {
+				return result
+			} else {
 				close()
 				setNotificationFailed({
 					message: 'Something Went Wrong!',
 				})
 
-				throw e
-			})
+				throw Error('Something Went Wrong!')
+			}
+		})
 
 		return result
 	}
@@ -137,36 +135,36 @@ export const MasterPasswordProvider = (props: PropsWithChildren<{}>) => {
 		})
 		const result = await callable(verifyMasterPasswordSchema)(
 			inputMasterPassword
-		)
-			.then(result => {
-				const { code } = result
-				if (code === 'ok') {
-					const { data } = result
-					if (data) {
-						setMasterPassword(inputMasterPassword)
-						close()
-						setNotificationSuccess({
-							message: 'Successfully Decrypted Password!',
-						})
-						ref.current(data)
-						// continue on notification hook
-					} else {
-						// this should not happen, page hook takes care of this
-						close()
-						setNotificationFailed({
-							message: 'No Master Password!',
-						})
-					}
-					return result
+		).then(result => {
+			const { code } = result
+			console.log(123)
+			if (code === 'ok') {
+				const { data } = result
+				if (data) {
+					setMasterPassword(inputMasterPassword)
+					close()
+					setNotificationSuccess({
+						message: 'Successfully Decrypted Password!',
+					})
+					ref.current(data)
+					// continue on notification hook
+				} else {
+					// this should not happen, page hook takes care of this
+					close()
+					setNotificationFailed({
+						message: 'No Master Password!',
+					})
 				}
-			})
-			.catch(e => {
+				return result
+			} else {
 				close()
 				setNotificationFailed({
 					message: 'Incorrect Master Password!',
 				})
-				throw e
-			})
+				throw Error('Incorrect Master Password!')
+			}
+		})
+
 		setLoading(false)
 		return result
 	}

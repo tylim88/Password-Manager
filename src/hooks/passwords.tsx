@@ -86,21 +86,20 @@ export const PasswordsProvider = (props: PropsWithChildren<{}>) => {
 		const result = await callable(updatePasswordsSchema)({
 			masterPassword,
 			newPasswords,
-		})
-			.then(result => {
-				if (result.code === 'ok') {
-					setNotificationSuccess({ message: 'Successfully Updated Passwords!' })
-					return result
-				}
-			})
-			.catch(err => {
+		}).then(result => {
+			if (result.code === 'ok') {
+				setNotificationSuccess({ message: 'Successfully Updated Passwords!' })
+				return result
+			} else {
 				close()
 				setPasswords(passwords) // revert optimistic update
 				setNotificationFailed({
 					message: 'Failed to Update Passwords!',
 				})
-				throw err
-			})
+				throw Error('Failed to Update Passwords!')
+			}
+		})
+
 		close()
 		return result
 	}
